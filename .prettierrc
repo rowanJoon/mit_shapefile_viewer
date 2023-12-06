@@ -1,0 +1,28 @@
+{
+    "printWidth": 80,
+    "tabWidth": 4,
+    "useTabls": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "consistent",
+    "jsxSingleQuote": true,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": false,
+    "arrowParens": "avoid",
+    "parser": "typescript",
+    "overrides": [
+        {
+            "files": "*.html",
+            "options": {
+                "parser": "html"
+            }
+        },
+        {
+            "files": [".prettierrc", "*.json"],
+            "options": {
+                "parser": "json"
+            }
+        }
+    ]
+}

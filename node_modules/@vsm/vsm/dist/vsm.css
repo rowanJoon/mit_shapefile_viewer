@@ -1,0 +1,287 @@
+.vsm-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.vsm-container-bg {
+    background-image:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/+EATEV4aWYAAE1NACoAAAAIAAGHaQAEAAAAAQAAABoAAAAAAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAtCgAwAEAAAAAQAAAtAAAAAA//4AIkNyb3BwZWQgd2l0aCBlemdpZi5jb20gR0lGIG1ha2Vy/9sAQwABAQEBAQEBAQEBAQEBAgIDAgICAgIEAwMCAwUEBQUFBAQEBQYHBgUFBwYEBAYJBgcICAgICAUGCQoJCAoHCAgI/8AACwgBaAFoAQERAP/EABsAAQADAQEBAQAAAAAAAAAAAAADBQYCBAEK/8QAQBABAAEDAQIHDAgGAwEAAAAAAAIBAwQFERIGEyEzcXKxFCIxMjVBUmKBwdHhFTRCUVNhk/AWVHOCkZIlY6FD/9oACAEBAAA/AP10AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2fFaF+Jif7USWsPR70qRs9zXJejSVHV3B0mxu8dGxb2+lso8GZa0eOPcrYuY3GbOTdlRV6Vp3dtzfntjYjXvvW/Joa2dHt3O5pRxeM/PZtcx0PDhdldr31v0alLGj5e9YtRs8Z6mzazWo4MsG9ueNbr4KuMDCnm3uLp3saeNJp5Yek4W7G9xO96+za4pPQ5VrTcxo/wCEGbotmVnj8P0d7Z5pU/JmbdNtyMa/e2k8DTLNmNy9btxhycstjzbNC/6P80SRwdIzIyjYlDe9STM52FPAvcVKW/Hw0q8QAAAAAAAADR8HaU4+/Wvoe+jx65WtdQvUr5t3sVDZ6NyaXcrTb41exkrtayyLkuXe369raZcpfRW99qtqnYyOBKsczHrT06NDwhpTirMvtbz7wehSlm9OvjV3fezeZcldyb0512yrV5Wv4PTlKxehXxaSju+3azl2lI5s6U5Kb7U6z5Ph0U7GKe7TaXq5uPW16dNvQvuEVYVtWaf/AE2/+crJgAAAAAAAANLwe52/1fgrtb8pXfZ2KttNG8mXP7+xkLnP3f6ku1s8zyPT+lTsZHB+uY3Xo0nCLmLPWdcHuYudPxdXL2hUnKlzc3vtd7X4OOP0D/q/1r8FlgTwZxudw7mzk3t2NadrF3/r0+u2uRLFjjUrm8xyff7lZxvB374f6ydx1DRsWkpY+7KXqxrt/wDWazs25n3uOn3sfFjR4gAAAAAAAAGl4Pc7f6vwV2t+Urvs7FW2mjeTLn9/Yx8+eudeva2mZ5Hp/Sp2Mjg/XMbr0aThFzFnrOuD3MXOn4srkc9c6ULV8HebyOtH3qG/9en12o1nyfDop2MUAAAAAAAAAAltX7tmta2rlY7XM7k7st+ct6VXCeGTftw3IXJxj9yGta1rt86eWVkyhxcr05W/BuoYyrGUZR5JUSXci/epsu3ZSfbWTfs02Wrso0Q1rWXfV874mtZF+zGVLM5241R1nKst6te+S3Mm/dhSFy7KUUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJbdi9djtt2pyjRJ3FlfgT/ftO4sr8Cf79p3FlfgT/ftQThK3KtJx3ZJbONkZFdlmzO70Pl3HyLFd27bnbkkt4WXejvWsecooLludqW5ONYycO4W53a7tuO9J6vo7M/An/hDcxsizTbctztoE1uxdu03rdved9xZX4E/37TuPJjy8TOn76UFY1jXZLvXIAAAAAAAALnTtXjgWrlquPx22W9vb2z3LGnCOla7KYdf1PkvcjJjjY08i5GnJHxVD/ElP5Ov6nyVO36T1Hbu8Xvy6d3saXMzLGk2rdq3Y39vgp4PAkws2zqdqVJ2YbaS76MuV5s3WYYN7ua3Zrc3fD3267ybdjVcCV+Md27Sm2n37aU27GNtW63Ltu1TxpS2NrKWPo2HCtbW9c8X85VVteEkvNi7f7ntwtYtZs+57tni5S9tJKPWcKOLfpO3zc+Xd9Fa8HuZvdanvcXeEMoTlDuXwet8nMeEfL32L3vW+T25eNjanh902o7tzd3oyp4ehigAAAAAAAAEkOdt9NG01vybP2dtGHWmjfX7L38IuesdV1we52/1fgq9W8oZPWaTRvJ8+ivYzWBT/AJCz12h1zHv34WaWbc7safczn0Zm/gXP37HrwNPy7eZjznZnGNJ03ljwj5ux0u+D3M3utT3qS/p+ZW9crTHv+H0XEdLz5V3aY8tnVazHh9G6bWl6W7KlKy8Hn8OxhAAAAAAAAAEkOdt9NG01vybP2dtGHWmjfX7L38IuesdV1we52/1fgq9W8oZPWaTRvJ8+ivYzWB5Qs9f3tZqWo1wKW9lnjNvrbFV/Ec/5KH6vyTYmuyyL9mx3LbjvS3du98nHCPm7HS74Pcze61PejucIZW5yt9ywls9b5OP4ju/ydv8AU+SozNRycyuy5Xdt/Zg8AAAAAAAAADqFdk41r97V6rnYt/BlbtXoSlXZye1klhpl2FnMt3LktyNPtPZreTZyLtmtm5xmynmfdEybOPcvTvXI29sfP7Hg1G5C7m37luW9GsvCu9Mzcaxgyt3L0I3eXk9ijwrkLebbuTluxpNaa3lWMjieJuQubPRZ568G5C1l49y5OkY0nGtVvreXjZELMbVyF3ZLzO9Ey8fGtXo3rkLe2tPD7WfvVpK7crTxdqIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/2Q==);
+    background-size: 180px;
+}
+
+.vsm-canvas-container {
+    cursor: grab;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.vsm-canvas-container.left-click {
+    cursor: grabbing;
+}
+
+.vsm-canvas-container.right-click {
+    cursor: all-scroll;
+}
+
+.vsm-canvas-container.double-click {
+    cursor: ns-resize;
+}
+
+.vsm-canvas-container.wheel {
+    cursor: cell;
+}
+
+.vsm-canvas {
+    touch-action: none;
+}
+
+.vsm-alt {
+    padding: 10px;
+}
+
+.vsm-control-dock {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 2;
+    padding: 5px;
+    margin: 0;
+}
+
+.vsm-control-dock.vsm-nested {
+    position: relative;
+    padding: 0;
+}
+
+.vsm-control-dock.vsm-pos-default {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+.vsm-control-dock.vsm-pos-top-left {
+    top: 0;
+    left: 0;
+    align-items: flex-start;
+}
+
+.vsm-control-dock.vsm-pos-top-right {
+    top: 0;
+    right: 0;
+    align-items: flex-end;
+}
+
+.vsm-control-dock.vsm-pos-bottom-left {
+    bottom: 0;
+    left: 0;
+    align-items: flex-start;
+}
+
+.vsm-control-dock.vsm-pos-bottom-right {
+    bottom: 0;
+    right: 0;
+    align-items: flex-end;
+}
+
+.vsm-control {
+    display: block;
+}
+
+.vsm-control.vsm-interactive {
+    pointer-events: auto;
+}
+
+.vsm-control.vsm-interactive :focus-within{
+    outline: 5px auto -webkit-focus-ring-color;
+}
+
+.vsm-contents-wrap {
+    display: block;
+}
+
+.vsm-button-frame {
+    display: block;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: transparent;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.vsm-button {
+    display: block;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    touch-action: none;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+}
+
+.vsm-button:disabled {
+    color: rgb(200, 200, 200);
+    cursor: auto;
+}
+
+.vsm-button:hover:not([disabled]) {
+    background-color: rgb(229, 229, 229);
+}
+
+.vsm-icon {
+    fill: currentColor;
+    stroke: currentColor;
+    width: 100%;
+    height: 100%;
+}
+
+.vsm-icon.vsm-center-pointer {
+    color: #aa0200;
+    opacity: 0.7;
+}
+
+.vsm-icon.vsm-zoom-in {
+
+}
+
+.vsm-icon.vsm-zoom-out {
+
+}
+
+.vsm-icon.vsm-compass {
+
+}
+
+.vsm-icon.vsm-pitch-aligner {
+
+}
+
+.vsm-icon.vsm-full-screen-enter {
+
+}
+
+.vsm-icon.vsm-full-screen-exit {
+
+}
+
+.vsm-icon.vsm-my-location-off {
+
+}
+
+.vsm-icon.vsm-my-location-watch-position {
+    color: #2a7fff;
+}
+
+.vsm-icon.vsm-my-location-watch-position-and-heading {
+    color: #2a7fff;
+}
+
+.vsm-scale-bar-frame {
+    display: grid;
+    grid-template-columns: 0fr 0fr;
+    grid-column-gap: 2px;
+    align-items: center;
+    padding: 0 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 7pt;
+}
+
+.vsm-scale-bar-frame .vsm-scale-label {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.vsm-scale-bar-frame .vsm-scale-bar {
+    position: relative;
+    display: block;
+    height: 60%;
+    margin: 0;
+    padding: 0;
+}
+
+.vsm-scale-bar-frame .vsm-scale-bar-canvas {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.vsm-info-frame {
+    display: block;
+    min-width: 220px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+}
+
+.vsm-info-title {
+    padding-bottom: 3px;
+}
+
+.vsm-info-row {
+    display: flex;
+}
+
+.vsm-info-property {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.vsm-info-property-name {
+
+}
+
+.vsm-info-property-value {
+
+}
+
+.vsm-mouse-point-checkbox {
+    margin-left: auto;
+}
+
+.vsm-control.vsm-group {
+    display: block;
+}
+
+.vsm-align-left {
+    text-align: left;
+}
+
+.vsm-align-right {
+    text-align: right;
+}
+
+.vsm-align-center {
+    text-align: center;
+}
+
+.vsm-flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.vsm-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.vsm-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    opacity: 1;
+    transition: opacity .2s;
+}
