@@ -1,13 +1,14 @@
 {
     "name": "vsm-admin-fe",
     "version": "1.0.0",
-    "description": "",
-    "main": "main.js",
+    "description": "VSM Shapefile Viewer",
+    "main": "dist/main.js",
+    "type": "module",
     "scripts": {
-        "start": "ts-node app.ts"
+        "start": "node --loader ts-node/esm app.ts"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": ["typescript", "express"],
+    "author": "rowan joon",
     "license": "ISC",
     "devDependencies": {
         "@types/node": "^20.10.3",
