@@ -1,22 +1,22 @@
 import { ShapeFileHeader, Coordinate } from './main';
 
 export function calculatePointData(arrayBuffer: ArrayBuffer) {
-    const view = new DataView(arrayBuffer);
+    const view: DataView = new DataView(arrayBuffer);
     const points: Coordinate[] = [];
-    let offset = 100;
+    let offset: number = 100;
 
     while (offset < arrayBuffer.byteLength) {
-        const contentLength = view.getInt32(offset + 4, false);
-        const geometryData = arrayBuffer.slice(
+        const contentLength: number = view.getInt32(offset + 4, false);
+        const geometryData: ArrayBuffer = arrayBuffer.slice(
             offset + 8,
             offset + 8 + contentLength * 2
         );
-        const geometryView = new DataView(geometryData);
-        const numPoints = contentLength / 20;
+        const geometryView: DataView = new DataView(geometryData);
+        const numPoints: number = contentLength / 20;
 
-        for (let i = 0; i < numPoints; i++) {
-            const x = geometryView.getFloat64(i + 4, true);
-            const y = geometryView.getFloat64(i + 12, true);
+        for (let i = 0, len = numPoints; i < len; i++) {
+            const x: number = geometryView.getFloat64(i + 4, true);
+            const y: number = geometryView.getFloat64(i + 12, true);
 
             points.push({ x, y });
         }
@@ -40,15 +40,15 @@ export function PointGeometryRenderWebPage(
     }
 
     for (const coord of coordinates) {
-        const x = coord.x;
-        const y = coord.y;
+        const x: number = coord.x;
+        const y: number = coord.y;
 
         if (x !== undefined && y !== undefined) {
-            const renderX =
+            const renderX: number =
                 ((x - header.boundingBox.xMin) /
                     (header.boundingBox.xMax - header.boundingBox.xMin)) *
                 canvas.width;
-            const renderY =
+            const renderY: number =
                 canvas.height -
                 ((y - header.boundingBox.yMin) /
                     (header.boundingBox.yMax - header.boundingBox.yMin)) *

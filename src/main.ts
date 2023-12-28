@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+        const reader: FileReader = new FileReader();
 
         reader.onload = () => {
             if (reader.result instanceof ArrayBuffer) {
@@ -56,18 +56,18 @@ function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 async function handleFileSelect(event: Event) {
     const target = event.target as HTMLInputElement;
     const fileNameInputElements = document.querySelectorAll<HTMLInputElement>(
-        '#pointFileNameField, #polylineFileNameField'
+        '#pointFileNameField, #polylineFileNameField, #polygonFileNameField'
     );
     const inputArray: HTMLInputElement[] = Array.from(fileNameInputElements);
 
     if (target.files && target.files.length > 0) {
-        const selectedFiles = target.files;
-        const fileName = selectedFiles[0].name;
+        const selectedFiles: FileList = target.files;
+        const fileName: string = selectedFiles[0].name;
 
         for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            const arrayBuffer = await readFileAsArrayBuffer(file);
-            const view = new DataView(arrayBuffer);
+            const file: File = selectedFiles[i];
+            const arrayBuffer: ArrayBuffer = await readFileAsArrayBuffer(file);
+            const view: DataView = new DataView(arrayBuffer);
             const header: ShapeFileHeader = readShapefileHeader(view);
 
             switch (header.shapeType) {
@@ -76,6 +76,7 @@ async function handleFileSelect(event: Event) {
                         header,
                         calculatePointData(arrayBuffer)
                     );
+                    inputArray[0].innerText = fileName;
                     break;
                 case 3:
                     PolylineGeometryRenderWebPage(
@@ -89,6 +90,7 @@ async function handleFileSelect(event: Event) {
                         header,
                         calculatePolygonData(arrayBuffer)
                     );
+                    inputArray[2].innerText = fileName;
                     break;
             }
         }
