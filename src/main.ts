@@ -1,12 +1,10 @@
-import { calculatePointData, PointGeometryRenderWebPage } from './point.js';
 import {
-    calculatePolylineData,
-    PolylineGeometryRenderWebPage
-} from './polyline.js';
-import {
-    calculatePolygonData,
-    PolygonGeometryRenderWebPage
-} from './polygon.js';
+    calculatePointData,
+    PointGeometryRenderWebPage
+} from './feature/point.js';
+import { calculateFeatureData } from './feature/feature.js';
+import { PolylineGeometryRenderWebPage } from './feature/polyline/polyline.js';
+import { PolygonGeometryRenderWebPage } from './feature/polygon/polygon.js';
 
 export interface ShapeFileHeader {
     fileCode: number;
@@ -81,14 +79,14 @@ async function handleFileSelect(event: Event) {
                 case 3:
                     PolylineGeometryRenderWebPage(
                         header,
-                        calculatePolylineData(arrayBuffer)
+                        calculateFeatureData(arrayBuffer)
                     );
                     inputArray[1].innerText = fileName;
                     break;
                 case 5:
                     PolygonGeometryRenderWebPage(
                         header,
-                        calculatePolygonData(arrayBuffer)
+                        calculateFeatureData(arrayBuffer)
                     );
                     inputArray[2].innerText = fileName;
                     break;

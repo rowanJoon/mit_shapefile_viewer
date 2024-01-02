@@ -1,4 +1,4 @@
-import { ShapeFileHeader, Coordinate } from './main';
+import { ShapeFileHeader, Coordinate } from '../main';
 
 export function calculatePointData(arrayBuffer: ArrayBuffer) {
     const view: DataView = new DataView(arrayBuffer);
