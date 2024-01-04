@@ -1,10 +1,10 @@
 import {
     calculatePointData,
-    PointGeometryRenderWebPage
+    pointGeometryRenderWebPage
 } from './feature/point.js';
 import { calculateFeatureData } from './feature/feature.js';
-import { PolylineGeometryRenderWebPage } from './feature/polyline/polyline.js';
-import { PolygonGeometryRenderWebPage } from './feature/polygon/polygon.js';
+import { polylineGeometryRenderWebPage } from './feature/polyline/polyline.js';
+import { polygonGeometryRenderWebPage } from './feature/polygon/polygon.js';
 
 export interface ShapeFileHeader {
     fileCode: number;
@@ -24,6 +24,16 @@ export interface BoundingBox {
 export interface Coordinate {
     x: number;
     y: number;
+}
+
+export class MapInteractor {
+    zoom: number = 1;
+    centerX: number = 0;
+    centerY: number = 0;
+    cursorX: number = 0;
+    cursorY: number = 0;
+    panX: number = 0;
+    panY: number = 0;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,14 +63,14 @@ function readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 
 async function handleFileSelect(event: Event) {
     const target = event.target as HTMLInputElement;
-    const fileNameInputElements = document.querySelectorAll<HTMLInputElement>(
-        '#pointFileNameField, #polylineFileNameField, #polygonFileNameField'
+    const canvasElements = document.querySelectorAll<HTMLCanvasElement>(
+        '#pointCanvas, #polylineCanvas, #polygonCanvas'
     );
-    const inputArray: HTMLInputElement[] = Array.from(fileNameInputElements);
+    const canvasArray: HTMLCanvasElement[] = Array.from(canvasElements);
+    const mapInteractor = new MapInteractor();
 
     if (target.files && target.files.length > 0) {
         const selectedFiles: FileList = target.files;
-        const fileName: string = selectedFiles[0].name;
 
         for (let i = 0; i < selectedFiles.length; i++) {
             const file: File = selectedFiles[i];
@@ -70,25 +80,23 @@ async function handleFileSelect(event: Event) {
 
             switch (header.shapeType) {
                 case 1:
-                    PointGeometryRenderWebPage(
+                    pointGeometryRenderWebPage(
                         header,
-                        calculatePointData(arrayBuffer)
+                        calculatePointData(arrayBuffer),
+                        mapInteractor
                     );
-                    inputArray[0].innerText = fileName;
                     break;
                 case 3:
-                    PolylineGeometryRenderWebPage(
+                    polylineGeometryRenderWebPage(
                         header,
                         calculateFeatureData(arrayBuffer)
                     );
-                    inputArray[1].innerText = fileName;
                     break;
                 case 5:
-                    PolygonGeometryRenderWebPage(
+                    polygonGeometryRenderWebPage(
                         header,
                         calculateFeatureData(arrayBuffer)
                     );
-                    inputArray[2].innerText = fileName;
                     break;
             }
         }

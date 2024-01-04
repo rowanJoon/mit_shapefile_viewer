@@ -1,4 +1,5 @@
-import { ShapeFileHeader, Coordinate } from '../main';
+import { ShapeFileHeader, Coordinate, MapInteractor } from '../main.js';
+import { mapPanning } from '../util/interact.js';
 
 export function calculatePointData(arrayBuffer: ArrayBuffer) {
     const view: DataView = new DataView(arrayBuffer);
@@ -27,9 +28,10 @@ export function calculatePointData(arrayBuffer: ArrayBuffer) {
     return points;
 }
 
-export function PointGeometryRenderWebPage(
+export function pointGeometryRenderWebPage(
     header: ShapeFileHeader,
-    coordinates: { x: number; y: number }[]
+    coordinates: { x: number; y: number }[],
+    mapInteractor: MapInteractor
 ): void {
     const canvas = document.querySelector('#pointCanvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');
@@ -57,6 +59,56 @@ export function PointGeometryRenderWebPage(
             ctx.beginPath();
             ctx.arc(renderX, renderY, 2, 0, 2 * Math.PI);
             ctx.fill();
+            ctx.closePath();
         }
     }
+
+    mapPanning(header, canvas, coordinates, mapInteractor);
+}
+
+export function updatePointGeometryRenderWebPage(
+    header: ShapeFileHeader,
+    canvas: HTMLCanvasElement,
+    coordinates: { x: number; y: number }[],
+    mapInteractor: MapInteractor
+) {
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+        console.error('Unable to get 2D context');
+        return;
+    }
+
+    console.log(mapInteractor);
+
+    let mapWidth = ctx.getImageData(0, 0, canvas.width, canvas.height).width;
+    let mapHeight = ctx.getImageData(0, 0, canvas.width, canvas.height).height;
+
+    ctx.clearRect(0, 0, mapWidth, mapHeight);
+    ctx.save();
+    ctx.translate(mapInteractor.panX, mapInteractor.panY);
+    ctx.scale(mapInteractor.zoom, mapInteractor.zoom);
+
+    for (const coord of coordinates) {
+        const x: number = coord.x;
+        const y: number = coord.y;
+
+        if (x !== undefined && y !== undefined) {
+            const renderX: number =
+                ((x - header.boundingBox.xMin) /
+                    (header.boundingBox.xMax - header.boundingBox.xMin)) *
+                mapWidth;
+            const renderY: number =
+                mapHeight -
+                ((y - header.boundingBox.yMin) /
+                    (header.boundingBox.yMax - header.boundingBox.yMin)) *
+                    mapHeight;
+
+            ctx.beginPath();
+            ctx.arc(renderX, renderY, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+    ctx.restore();
 }

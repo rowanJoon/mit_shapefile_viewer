@@ -1,7 +1,7 @@
-import { ShapeFileHeader } from '../../main';
-import { Feature } from '../feature';
+import { ShapeFileHeader } from '../../main.js';
+import { Feature } from '../feature.js';
 
-export function PolygonGeometryRenderWebPage(
+export function polygonGeometryRenderWebPage(
     header: ShapeFileHeader,
     polygonData: Feature
 ): void {
