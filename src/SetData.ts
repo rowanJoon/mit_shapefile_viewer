@@ -1,6 +1,6 @@
 import { ShapeHeader, Coordinate, PolyDataSet } from './type/Type.js';
 import { Point } from './feature/Point.js';
-import { Poly } from './feature/Poly.js';
+import { Poly } from './feature/poly/Poly.js';
 
 export class SetData {
     private arrayBuffer: ArrayBuffer;

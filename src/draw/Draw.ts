@@ -2,7 +2,7 @@ import { CanvasRenderer } from './CanvasRenderer.js';
 
 import { Coordinate } from '../type/Type.js';
 import { Point } from '../feature/Point.js';
-import { Poly } from '../feature/Poly.js';
+import { Poly } from '../feature/poly/Poly.js';
 
 export class Draw {
     private static renderer: CanvasRenderer;

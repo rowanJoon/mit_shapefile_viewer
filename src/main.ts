@@ -3,7 +3,7 @@ import { ShapeFileReader } from './util/ReadShapefile.js';
 import { SetData } from './SetData.js';
 
 import { Point } from './feature/Point.js';
-import { Poly } from './feature/Poly.js';
+import { Poly } from './feature/poly/Poly.js';
 
 import { Draw } from './draw/Draw.js';
 class Main {

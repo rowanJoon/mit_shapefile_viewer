@@ -1,4 +1,4 @@
-import { Shape, ShapeHeader, ShapeContents } from '../type/Type.js';
+import { Shape, ShapeHeader, ShapeContents } from '../../type/Type.js';
 
 export class Poly implements Shape {
     shapeHeader: ShapeHeader;
