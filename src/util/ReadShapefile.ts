@@ -1,17 +1,4 @@
-export type BoundingBox = {
-    xMin: number;
-    yMin: number;
-    xMax: number;
-    yMax: number;
-};
-
-export type ShapeHeader = {
-    fileCode: number;
-    fileLength: number;
-    version: number;
-    shapeType: number;
-    boundingBox: BoundingBox;
-};
+import { ShapeHeader, BoundingBox } from '../type/Type.js';
 
 export class ShapeFileReader {
     static getBoundingBox(view: DataView): BoundingBox {

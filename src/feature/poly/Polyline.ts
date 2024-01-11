@@ -1,6 +1,7 @@
 import { ShapeHeader, ShapeContents } from '../../type/Type.js';
 import { Poly } from '../Poly.js';
-export class Polygon implements Poly {
+
+export class Polyline implements Poly {
     shapeHeader: ShapeHeader;
     shapeContents: ShapeContents;
 
