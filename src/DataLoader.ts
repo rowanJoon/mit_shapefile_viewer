@@ -1,8 +1,9 @@
 import { ShapeHeader, Coordinate, PolyDataSet } from './type/Type.js';
-import { Point } from './feature/Point.js';
-import { Poly } from './feature/poly/Poly.js';
 
-export class SetData {
+import { Point } from './feature/Point.js';
+import { Poly } from './feature/Poly.js';
+
+export class DataLoader {
     private arrayBuffer: ArrayBuffer;
     private view: DataView;
 
@@ -11,7 +12,7 @@ export class SetData {
         this.view = new DataView(arrayBuffer);
     }
 
-    public setPointData(
+    public loadPointData(
         shapeHeader: ShapeHeader,
         contentsOffset: number
     ): Point {
@@ -48,7 +49,7 @@ export class SetData {
         });
     }
 
-    public setPolyData(shapeHeader: ShapeHeader, offset: number): Poly {
+    public loadPolyData(shapeHeader: ShapeHeader, offset: number): Poly {
         let polyDataset: PolyDataSet = {
             Box: {
                 xMin: 0,

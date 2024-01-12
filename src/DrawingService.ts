@@ -1,27 +1,51 @@
-import { CanvasRenderer } from './CanvasRenderer.js';
+import { Coordinate } from './type/Type.js';
 
-import { Coordinate } from '../type/Type.js';
-import { Point } from '../feature/Point.js';
-import { Poly } from '../feature/poly/Poly.js';
+import { Point } from './feature/Point.js';
+import { Poly } from './feature/Poly.js';
 
-export class Draw {
-    private static renderer: CanvasRenderer;
+import { RenderingEngine } from './util/RenderingEngine.js';
 
-    static init(canvasId: string) {
-        this.renderer = new CanvasRenderer(canvasId);
+abstract class DrawingService {
+    protected renderer: RenderingEngine;
+
+    constructor(canvasId: string) {
+        this.renderer = new RenderingEngine(canvasId);
     }
 
-    static drawPointWebPage(point: Point) {
+    abstract draw(): void;
+
+    checkInitRenderer() {
         if (!this.renderer) {
             console.error('Renderer not initialized!');
             return;
         }
+    }
 
-        const boundingBox = point.shapeHeader.boundingBox;
-        const coordinates = point.shapeContents.contents;
-
+    clearAndSaveContext() {
         this.renderer.clearCanvas();
         this.renderer.saveContext();
+    }
+
+    restoreContext() {
+        this.renderer.restoreContext();
+    }
+}
+
+export class DrawingPoint extends DrawingService {
+    private point: Point;
+
+    constructor(canvasId: string, point: Point) {
+        super(canvasId);
+        this.point = point;
+    }
+
+    draw(): void {
+        this.checkInitRenderer();
+
+        const boundingBox = this.point.shapeHeader.boundingBox;
+        const coordinates = this.point.shapeContents.contents;
+
+        this.clearAndSaveContext();
 
         if (Array.isArray(coordinates)) {
             for (const coord of coordinates) {
@@ -39,21 +63,26 @@ export class Draw {
             }
         }
 
-        this.renderer.restoreContext();
+        this.restoreContext();
+    }
+}
+
+export class DrawingPoly extends DrawingService {
+    private poly: Poly;
+
+    constructor(canvasId: string, poly: Poly) {
+        super(canvasId);
+        this.poly = poly;
     }
 
-    static drawPolyWebPage(poly: Poly) {
-        if (!this.renderer) {
-            console.error('Renderer not initialized!');
-            return;
-        }
+    draw(): void {
+        this.checkInitRenderer();
 
-        const shapeType: number = poly.shapeHeader.shapeType;
-        const boundingBox = poly.shapeHeader.boundingBox;
-        const contents = poly.shapeContents.contents;
+        const shapeType: number = this.poly.shapeHeader.shapeType;
+        const boundingBox = this.poly.shapeHeader.boundingBox;
+        const contents = this.poly.shapeContents.contents;
 
-        this.renderer.clearCanvas();
-        this.renderer.saveContext();
+        this.clearAndSaveContext();
 
         if ('PartsCoordinates' in contents) {
             const partsCoordinates: Array<Coordinate>[] =
@@ -85,6 +114,6 @@ export class Draw {
             });
         }
 
-        this.renderer.restoreContext();
+        this.restoreContext();
     }
 }

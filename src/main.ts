@@ -1,11 +1,12 @@
 import { FileReaderPromise } from './util/FileReader.js';
 import { ShapeFileReader } from './util/ReadShapefile.js';
-import { SetData } from './SetData.js';
 
 import { Point } from './feature/Point.js';
-import { Poly } from './feature/poly/Poly.js';
+import { Poly } from './feature/Poly.js';
 
-import { Draw } from './draw/Draw.js';
+import { DataLoader } from './DataLoader.js';
+import { DrawingPoint, DrawingPoly } from './DrawingService.js';
+
 class Main {
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
@@ -31,23 +32,29 @@ class Main {
                 const header = ShapeFileReader.getHeader(view);
 
                 if (header.shapeType === 1) {
-                    const pointData: SetData = new SetData(arrayBuffer);
-                    const point: Point = pointData.setPointData(
+                    const pointData: DataLoader = new DataLoader(arrayBuffer);
+                    const point: Point = pointData.loadPointData(
                         header,
                         contentsOffset
                     );
+                    const pointDraw: DrawingPoint = new DrawingPoint(
+                        'featureCanvas',
+                        point
+                    );
 
-                    Draw.init('featureCanvas');
-                    Draw.drawPointWebPage(point);
+                    pointDraw.draw();
                 } else if (header.shapeType === 3 || header.shapeType === 5) {
-                    const polyData: SetData = new SetData(arrayBuffer);
-                    const poly: Poly = polyData.setPolyData(
+                    const polyData: DataLoader = new DataLoader(arrayBuffer);
+                    const poly: Poly = polyData.loadPolyData(
                         header,
                         contentsOffset
                     );
+                    const polyDraw: DrawingPoly = new DrawingPoly(
+                        'featureCanvas',
+                        poly
+                    );
 
-                    Draw.init('featureCanvas');
-                    Draw.drawPolyWebPage(poly);
+                    polyDraw.draw();
                 } else {
                     console.error('Cannot Read ShapeType!');
                 }
