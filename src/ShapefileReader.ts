@@ -1,4 +1,4 @@
-import { ShapeHeader, BoundingBox } from '../type/Type.js';
+import { ShapeHeader, BoundingBox } from './type/Type.js';
 
 export class ShapeFileReader {
     static getBoundingBox(view: DataView): BoundingBox {

@@ -47,6 +47,18 @@ export class RenderingEngine {
         }
     }
 
+    translate(panX: number, panY: number) {
+        if (this.ctx) {
+            this.ctx.translate(panX, panY);
+        }
+    }
+
+    scale(minZoom: number, maxZoom: number) {
+        if (this.ctx) {
+            this.ctx.scale(minZoom, maxZoom);
+        }
+    }
+
     saveContext() {
         if (this.ctx) {
             this.ctx.save();

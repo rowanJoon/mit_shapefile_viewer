@@ -10,6 +10,18 @@ export type BoundingBox = {
     yMax: number;
 };
 
+export type Interactor = {
+    zoom: number;
+    panX: number;
+    panY: number;
+    isDragging: boolean;
+    dragStartX: number;
+    dragStartY: number;
+    cursorX: number;
+    cursorY: number;
+    canvas: HTMLCanvasElement;
+};
+
 export type PolyDataSet = {
     Box: BoundingBox;
     NumParts: number;
