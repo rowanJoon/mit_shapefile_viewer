@@ -1,9 +1,9 @@
 export class FileReaderPromise {
     static readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): void => {
             const reader: FileReader = new FileReader();
 
-            reader.onload = () => {
+            reader.onload = (): void => {
                 if (reader.result instanceof ArrayBuffer) {
                     resolve(reader.result);
                 } else {
@@ -11,7 +11,7 @@ export class FileReaderPromise {
                 }
             };
 
-            reader.onerror = () => {
+            reader.onerror = (): void => {
                 reject(new Error('Error reading the file.'));
             };
 

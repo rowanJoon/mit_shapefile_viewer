@@ -21,10 +21,10 @@ export class EventDelegator {
             this.eventListeners.set(eventType, []);
         }
 
-        const listeners = this.eventListeners.get(eventType);
+        const listeners: CustomEventListener[] | undefined = this.eventListeners.get(eventType);
 
         if (listeners) {
-            const wrappedHandler = (e: Event) => {
+            const wrappedHandler = (e: Event): void => {
                 listener.handleEvent(e);
             };
 
@@ -38,7 +38,7 @@ export class EventDelegator {
     }
 
     removeAllEventListeners(): void {
-        this.eventListeners.forEach((listeners, eventType) => {
+        this.eventListeners.forEach((listeners: CustomEventListener[], eventType: string): void => {
             if (listeners) {
                 listeners.forEach(listener => {
                     if (listener.wrappedHandler) {
@@ -49,15 +49,5 @@ export class EventDelegator {
         });
 
         this.eventListeners.clear();
-    }
-
-    handleEvent(event: Event): void {
-        const listeners = this.eventListeners.get(event.type);
-
-        if (listeners) {
-            for (const listener of listeners) {
-                listener.originalListener?.handleEvent(event);
-            }
-        }
     }
 }

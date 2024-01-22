@@ -1,5 +1,4 @@
 import { ShapeHeader, Coordinate, PolyDataSet } from './type/Type.js';
-
 import { Point } from './feature/Point.js';
 import { Poly } from './feature/Poly.js';
 
@@ -12,18 +11,12 @@ export class DataLoader {
         this.view = new DataView(arrayBuffer);
     }
 
-    public loadPointData(
-        shapeHeader: ShapeHeader,
-        contentsOffset: number
-    ): Point {
+    public loadPointData(shapeHeader: ShapeHeader, contentsOffset: number): Point {
         let coordinates: Coordinate[] = [];
 
         while (contentsOffset < this.arrayBuffer.byteLength) {
             let coordinate: Coordinate = { x: 0, y: 0 };
-            const contentsLength: number = this.view.getInt32(
-                contentsOffset + 4,
-                false
-            );
+            const contentsLength: number = this.view.getInt32(contentsOffset + 4, false);
             const geometryData: ArrayBuffer = this.arrayBuffer.slice(
                 contentsOffset + 8,
                 contentsOffset + 8 + contentsLength * 2

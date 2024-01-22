@@ -4,23 +4,23 @@ export class MouseWheelEventHandler extends GeoCanvasEventHandler {
     handleEvent(e: WheelEvent): void {
         e.preventDefault();
 
-        const zoomFactor = 0.01;
-        const zoomDirection = e.deltaY > 0 ? -1 : 1;
+        const zoomFactor: number = 0.01;
+        const zoomDirection: number = e.deltaY > 0 ? -1 : 1;
 
-        const mouseX = e.offsetX;
-        const mouseY = e.offsetY;
+        const mouseX: number = e.offsetX;
+        const mouseY: number = e.offsetY;
 
-        const currentZoom = this.interactor.zoom;
-        const newZoom = Math.max(currentZoom + zoomDirection * zoomFactor, 0.1);
+        const currentZoom: number = this.geoCanvasInteract.zoom;
+        const newZoom: number = Math.max(currentZoom + zoomDirection * zoomFactor, 0.1);
 
-        this.interactor.zoom = newZoom;
+        this.geoCanvasInteract.zoom = newZoom;
 
-        this.interactor.panX += (mouseX - this.interactor.canvas.width / 2) * (currentZoom - newZoom);
-        this.interactor.panY += (mouseY - this.interactor.canvas.height / 2) * (currentZoom - newZoom);
+        this.geoCanvasInteract.panX += (mouseX - this.geoCanvasInteract.canvas.width / 2) * (currentZoom - newZoom);
+        this.geoCanvasInteract.panY += (mouseY - this.geoCanvasInteract.canvas.height / 2) * (currentZoom - newZoom);
 
         this.geoData?.clearAndSaveContext();
-        this.geoData?.scaleContext(this.interactor.zoom, this.interactor.zoom);
-        this.geoData?.translateContext(this.interactor.panX, this.interactor.panY);
+        this.geoData?.scaleContext(this.geoCanvasInteract.zoom, this.geoCanvasInteract.zoom);
+        this.geoData?.translateContext(this.geoCanvasInteract.panX, this.geoCanvasInteract.panY);
         this.geoData?.draw();
         this.geoData?.restoreContext();
     }

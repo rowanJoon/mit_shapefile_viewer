@@ -1,14 +1,14 @@
-import { Interactor } from '../type/Type.js';
+import {GeoCanvasInteract} from '../type/Type.js';
 import { EventListener } from '../util/EventDelegator.js';
 import { RenderingPoint } from '../render/RenderingPoint.js';
 import { RenderingPoly } from '../render/RenderingPoly.js';
 
 export abstract class GeoCanvasEventHandler implements EventListener {
-    protected interactor: Interactor;
+    protected geoCanvasInteract: GeoCanvasInteract;
     protected geoData: RenderingPoint | RenderingPoly;
 
-    constructor(interactor: Interactor, geoData: RenderingPoint | RenderingPoly) {
-        this.interactor = interactor;
+    constructor(geoCanvasInteract: GeoCanvasInteract, geoData: RenderingPoint | RenderingPoly) {
+        this.geoCanvasInteract = geoCanvasInteract;
         this.geoData = geoData;
     }
 

@@ -10,7 +10,7 @@ export type BoundingBox = {
     yMax: number;
 };
 
-export type Interactor = {
+export type GeoCanvasInteract = {
     zoom: number;
     panX: number;
     panY: number;

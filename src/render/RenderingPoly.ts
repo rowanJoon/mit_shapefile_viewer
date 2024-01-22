@@ -1,5 +1,5 @@
+import {BoundingBox, Coordinate, PolyDataSet} from '../type/Type.js';
 import { Poly } from '../feature/Poly.js';
-import { Coordinate } from '../type/Type.js';
 import { RenderingService } from './RenderingService.js';
 
 export class RenderingPoly extends RenderingService {
@@ -14,8 +14,8 @@ export class RenderingPoly extends RenderingService {
         this.checkInitRenderer();
 
         const shapeType: number = this.poly.shapeHeader.shapeType;
-        const boundingBox = this.poly.shapeHeader.boundingBox;
-        const contents = this.poly.shapeContents.contents;
+        const boundingBox: BoundingBox = this.poly.shapeHeader.boundingBox;
+        const contents: Coordinate[] | PolyDataSet = this.poly.shapeContents.contents;
 
         this.clearAndSaveContext();
 

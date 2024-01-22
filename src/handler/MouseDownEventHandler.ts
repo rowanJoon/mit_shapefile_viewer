@@ -4,10 +4,8 @@ export class MouseDownEventHandler extends GeoCanvasEventHandler {
     handleEvent(e: MouseEvent): void {
         e.preventDefault();
 
-        this.interactor.isDragging = true;
-        this.interactor.dragStartX = e.clientX - this.interactor.panX;
-        this.interactor.dragStartY = e.clientY - this.interactor.panY;
-
-        console.log('mouseDown: ', this.interactor);
+        this.geoCanvasInteract.isDragging = true;
+        this.geoCanvasInteract.dragStartX = e.clientX - this.geoCanvasInteract.panX;
+        this.geoCanvasInteract.dragStartY = e.clientY - this.geoCanvasInteract.panY;
     }
 }

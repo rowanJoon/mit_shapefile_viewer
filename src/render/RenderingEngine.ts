@@ -1,6 +1,6 @@
 export class RenderingEngine {
     public canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D | null;
+    private readonly ctx: CanvasRenderingContext2D | null;
 
     constructor(canvasId: string) {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
@@ -11,67 +11,67 @@ export class RenderingEngine {
         }
     }
 
-    beginPath() {
+    beginPath(): void {
         if (this.ctx) {
             this.ctx.beginPath();
         }
     }
 
-    closePath() {
+    closePath(): void {
         if (this.ctx) {
             this.ctx.closePath();
         }
     }
 
-    stroke() {
+    stroke(): void {
         if (this.ctx) {
             this.ctx.stroke();
         }
     }
 
-    fill() {
+    fill(): void {
         if (this.ctx) {
             this.ctx.fill();
         }
     }
 
-    fillColor(color: string) {
+    fillColor(color: string): void {
         if (this.ctx) {
             this.ctx.fillStyle = color;
         }
     }
 
-    clearCanvas() {
+    clearCanvas(): void {
         if (this.ctx) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 
-    translate(panX: number, panY: number) {
+    translate(panX: number, panY: number): void {
         if (this.ctx) {
             this.ctx.translate(panX, panY);
         }
     }
 
-    scale(minZoom: number, maxZoom: number) {
+    scale(minZoom: number, maxZoom: number): void {
         if (this.ctx) {
             this.ctx.scale(minZoom, maxZoom);
         }
     }
 
-    saveContext() {
+    saveContext(): void {
         if (this.ctx) {
             this.ctx.save();
         }
     }
 
-    restoreContext() {
+    restoreContext(): void {
         if (this.ctx) {
             this.ctx.restore();
         }
     }
 
-    drawPoint(x: number, y: number) {
+    drawPoint(x: number, y: number): void {
         if (this.ctx) {
             this.beginPath();
             this.ctx.arc(x, y, 2, 0, 2 * Math.PI);
@@ -80,7 +80,7 @@ export class RenderingEngine {
         }
     }
 
-    drawPoly(x: number, y: number, idx: number) {
+    drawPoly(x: number, y: number, idx: number): void {
         if (this.ctx) {
             if (idx === 0) {
                 this.ctx.moveTo(x, y);
