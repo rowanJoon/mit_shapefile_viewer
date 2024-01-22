@@ -9,11 +9,11 @@ export class MouseMoveEventHandler extends GeoCanvasEventHandler {
             this.geoCanvasInteract.panX = deltaX;
             this.geoCanvasInteract.panY = deltaY;
 
-            this.geoData?.clearAndSaveContext();
-            this.geoData?.scaleContext(this.geoCanvasInteract.zoom, this.geoCanvasInteract.zoom);
-            this.geoData?.translateContext(this.geoCanvasInteract.panX, this.geoCanvasInteract.panY);
-            this.geoData?.draw();
-            this.geoData?.restoreContext();
+            this.shapeRender?.clearAndSaveContext();
+            this.shapeRender?.scaleContext(this.geoCanvasInteract.zoom, this.geoCanvasInteract.zoom);
+            this.shapeRender?.translateContext(this.geoCanvasInteract.panX, this.geoCanvasInteract.panY);
+            this.shapeRender?.render();
+            this.shapeRender?.restoreContext();
         }
     }
 }

@@ -1,4 +1,4 @@
-export class RenderingEngine {
+export class ShapeRenderEngine {
     public canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D | null;
 
