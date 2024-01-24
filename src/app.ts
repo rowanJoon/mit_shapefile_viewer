@@ -10,12 +10,13 @@ import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
 import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
 import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
 import {ShapeRender} from "./render/ShapeRender.js";
+import {Layer} from "./render/Layer.js";
 
 class App {
     private shapeRender: ShapeRender | undefined;
     private readonly geoCanvasInteract: GeoCanvasInteract;
     private eventDelegator: EventDelegator;
-
+    private layer: Layer;
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -37,6 +38,7 @@ class App {
         };
 
         this.eventDelegator = new EventDelegator(this.geoCanvasInteract.canvas);
+        this.layer = new Layer();
     }
 
     private async handleFileSelect(event: Event): Promise<void> {
@@ -82,7 +84,7 @@ class App {
     }
 
     private renderShape(shape: Point | Poly): void {
-        this.shapeRender = new ShapeRender('featureCanvas', shape);
+        this.shapeRender = new ShapeRender('featureCanvas', shape, this.layer);
         this.shapeRender.render(this.geoCanvasInteract);
     }
 
