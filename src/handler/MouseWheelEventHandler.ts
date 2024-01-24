@@ -18,10 +18,9 @@ export class MouseWheelEventHandler extends GeoCanvasEventHandler {
         this.geoCanvasInteract.panX += (mouseX - this.geoCanvasInteract.canvas.width / 2) * (currentZoom - newZoom);
         this.geoCanvasInteract.panY += (mouseY - this.geoCanvasInteract.canvas.height / 2) * (currentZoom - newZoom);
 
-        this.shapeRender?.clearAndSaveContext();
-        this.shapeRender?.scaleContext(this.geoCanvasInteract.zoom, this.geoCanvasInteract.zoom);
-        this.shapeRender?.translateContext(this.geoCanvasInteract.panX, this.geoCanvasInteract.panY);
-        this.shapeRender?.render();
-        this.shapeRender?.restoreContext();
+        this.geoCanvasInteract.radius = 2.5 / newZoom;
+        this.geoCanvasInteract.lineWidth = 1 / newZoom;
+
+        this.shapeRender.render(this.geoCanvasInteract);
     }
 }

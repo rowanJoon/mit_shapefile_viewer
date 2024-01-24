@@ -3,12 +3,12 @@ import { EventListener } from '../util/EventDelegator.js';
 import { ShapeRender } from "../render/ShapeRender";
 
 export abstract class GeoCanvasEventHandler implements EventListener {
-    protected geoCanvasInteract: GeoCanvasInteract;
     protected shapeRender: ShapeRender;
+    protected geoCanvasInteract: GeoCanvasInteract;
 
-    constructor(geoCanvasInteract: GeoCanvasInteract, shapeRender: ShapeRender) {
-        this.geoCanvasInteract = geoCanvasInteract;
+    constructor(shapeRender: ShapeRender, geoCanvasInteract: GeoCanvasInteract) {
         this.shapeRender = shapeRender;
+        this.geoCanvasInteract = geoCanvasInteract;
     }
 
     abstract handleEvent(e: Event): void;

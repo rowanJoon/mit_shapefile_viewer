@@ -15,13 +15,16 @@ export abstract class ShapeRenderService {
         }
     }
 
-    clearAndSaveContext(): void {
-        this.renderer.clearCanvas();
-        this.renderer.saveContext();
+    clearContext(): void {
+        this.renderer.clearRect();
+    }
+
+    saveContext(): void {
+        this.renderer.save();
     }
 
     restoreContext(): void {
-        this.renderer.restoreContext();
+        this.renderer.restore();
     }
 
     scaleContext(minZoom: number, maxZoom: number): void {

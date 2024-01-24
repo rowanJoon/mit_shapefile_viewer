@@ -10,13 +10,11 @@ import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
 import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
 import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
 import {ShapeRender} from "./render/ShapeRender.js";
-import {Layer} from "./render/Layer.js";
 
 class App {
     private shapeRender: ShapeRender | undefined;
     private readonly geoCanvasInteract: GeoCanvasInteract;
     private eventDelegator: EventDelegator;
-    private layer: Layer;
 
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
@@ -33,11 +31,12 @@ class App {
             dragStartY: 0,
             cursorX: 0,
             cursorY: 0,
-            canvas: document.getElementById('featureCanvas') as HTMLCanvasElement
+            canvas: document.getElementById('featureCanvas') as HTMLCanvasElement,
+            radius: 2,
+            lineWidth: 1
         };
 
         this.eventDelegator = new EventDelegator(this.geoCanvasInteract.canvas);
-        this.layer = new Layer();
     }
 
     private async handleFileSelect(event: Event): Promise<void> {
@@ -62,14 +61,14 @@ class App {
         if (header.shapeType === 1) {
             shape = this.loadPoint(arrayBuffer, header);
             this.renderShape(shape);
-            this.setMouseEvent();
         } else if (header.shapeType === 3 || header.shapeType === 5) {
             shape = this.loadPoly(arrayBuffer, header);
             this.renderShape(shape);
-            this.setMouseEvent();
         } else {
             console.error('Cannot Read ShapeType!');
         }
+
+        this.setMouseEvent();
     }
 
     private loadPoint(arrayBuffer: ArrayBuffer, header: ShapeHeader): Point {
@@ -84,22 +83,22 @@ class App {
 
     private renderShape(shape: Point | Poly): void {
         this.shapeRender = new ShapeRender('featureCanvas', shape);
-        this.shapeRender.render();
+        this.shapeRender.render(this.geoCanvasInteract);
     }
 
     private setMouseEvent(): void {
         if (this.eventDelegator.eventListeners.size !== 0) {
-            this.unRegistMouseEventHandler();
+            this.removeMouseEventHandler();
         }
-        this.registMouseEventHandler();
+        this.addMouseEventHandler();
     }
 
-    private registMouseEventHandler(): void {
+    private addMouseEventHandler(): void {
         if (this.shapeRender !== undefined) {
-            const mouseWheelEventHandler = new MouseWheelEventHandler(this.geoCanvasInteract, this.shapeRender);
-            const mouseDownEventHandler = new MouseDownEventHandler(this.geoCanvasInteract, this.shapeRender);
-            const mouseMoveEventHandler = new MouseMoveEventHandler(this.geoCanvasInteract, this.shapeRender);
-            const mouseUpEventHandler = new MouseUpEventHandler(this.geoCanvasInteract, this.shapeRender);
+            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(this.shapeRender, this.geoCanvasInteract);
+            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(this.shapeRender, this.geoCanvasInteract);
+            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(this.shapeRender, this.geoCanvasInteract);
+            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(this.shapeRender, this.geoCanvasInteract);
 
             this.eventDelegator.addEventListener('wheel', mouseWheelEventHandler);
             this.eventDelegator.addEventListener('mousedown', mouseDownEventHandler);
@@ -108,7 +107,7 @@ class App {
         }
     }
 
-    private unRegistMouseEventHandler(): void {
+    private removeMouseEventHandler(): void {
         this.eventDelegator.removeAllEventListeners();
     }
 }
