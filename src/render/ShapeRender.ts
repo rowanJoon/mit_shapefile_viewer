@@ -1,10 +1,10 @@
-import {BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape} from "../type/Type.js";
+import { BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape } from "../type/Type.js";
 import { ShapeRenderService } from "./ShapeRenderService.js";
-import {Layer} from "../render/Layer.js";
+import { Layer } from "./Layer.js";
 
 export class ShapeRender extends ShapeRenderService {
     private readonly shape: Shape;
-    private layer: Layer;
+    private readonly layer: Layer;
     constructor(canvasId: string, shape: Shape, layer: Layer) {
         super(canvasId);
         this.shape = shape;
@@ -30,8 +30,9 @@ export class ShapeRender extends ShapeRenderService {
         geoCanvasInteract: GeoCanvasInteract
     ): void {
         let extractCoord: Coordinate;
-        let hasCleared = false;
+        let hasCleared: boolean = false;
 
+        this.clearContext();
         this.saveContext();
         this.scaleContext(geoCanvasInteract.zoom, geoCanvasInteract.zoom);
         this.translateContext(geoCanvasInteract.panX, geoCanvasInteract.panY);
@@ -42,7 +43,7 @@ export class ShapeRender extends ShapeRenderService {
                 hasCleared = true;
             }
 
-            const contents = this.layer.geoObjects[i].shapeContents.contents;
+            const contents: Coordinate[] | PolyDataSet = this.layer.geoObjects[i].shapeContents.contents;
 
             if (Array.isArray(contents)) {
                 for (const coord of contents) {

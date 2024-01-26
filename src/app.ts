@@ -1,22 +1,22 @@
-import {GeoCanvasInteract, ShapeHeader} from './type/Type.js';
-import {DataLoader} from './DataLoader.js';
-import {ShapeFileReader} from './ShapefileReader.js';
-import {Point} from './feature/Point.js';
-import {Poly} from './feature/Poly.js';
-import {FileReaderPromise} from './util/FileReader.js';
-import {EventDelegator} from './util/EventDelegator.js';
-import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler.js';
-import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
-import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
-import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
-import {ShapeRender} from "./render/ShapeRender.js";
-import {Layer} from "./render/Layer.js";
+import { GeoCanvasInteract, ShapeHeader } from './type/Type.js';
+import { DataLoader } from './DataLoader.js';
+import { ShapeFileReader } from './ShapefileReader.js';
+import { Point } from './feature/Point.js';
+import { Poly } from './feature/Poly.js';
+import { FileReaderPromise } from './util/FileReader.js';
+import { EventDelegator } from './util/EventDelegator.js';
+import { MouseWheelEventHandler } from './handler/MouseWheelEventHandler.js';
+import { MouseDownEventHandler } from './handler/MouseDownEventHandler.js';
+import { MouseUpEventHandler } from './handler/MouseUpEventHandler.js';
+import { MouseMoveEventHandler } from './handler/MouseMoveEventHandler.js';
+import { ShapeRender } from "./render/ShapeRender.js";
+import { Layer } from "./render/Layer.js";
 
 class App {
     private shapeRender: ShapeRender | undefined;
     private readonly geoCanvasInteract: GeoCanvasInteract;
     private eventDelegator: EventDelegator;
-    private layer: Layer;
+    private readonly layer: Layer;
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -114,4 +114,4 @@ class App {
     }
 }
 
-const app: App = new App();
+new App();
