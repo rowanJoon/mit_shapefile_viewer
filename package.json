@@ -2,7 +2,7 @@
     "name": "vsm-admin-fe",
     "version": "1.0.0",
     "description": "VSM Shapefile Viewer",
-    "main": "dist/main.js",
+    "main": "dist/app.js",
     "type": "module",
     "scripts": {
         "start": "node --loader ts-node/esm app.ts"

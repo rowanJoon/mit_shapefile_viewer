@@ -1,4 +1,4 @@
-export class RenderingEngine {
+export class ShapeRenderEngine {
     public canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D | null;
 
@@ -41,7 +41,13 @@ export class RenderingEngine {
         }
     }
 
-    clearCanvas(): void {
+    setLineWidth(lineWidth: number): void {
+        if (this.ctx) {
+            this.ctx.lineWidth = lineWidth;
+        }
+    }
+
+    clearRect(): void {
         if (this.ctx) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
@@ -59,22 +65,22 @@ export class RenderingEngine {
         }
     }
 
-    saveContext(): void {
+    save(): void {
         if (this.ctx) {
             this.ctx.save();
         }
     }
 
-    restoreContext(): void {
+    restore(): void {
         if (this.ctx) {
             this.ctx.restore();
         }
     }
 
-    drawPoint(x: number, y: number): void {
+    drawPoint(x: number, y: number, radius: number): void {
         if (this.ctx) {
             this.beginPath();
-            this.ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
             this.fill();
             this.closePath();
         }

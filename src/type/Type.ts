@@ -20,6 +20,8 @@ export type GeoCanvasInteract = {
     cursorX: number;
     cursorY: number;
     canvas: HTMLCanvasElement;
+    radius: number;
+    lineWidth: number;
 };
 
 export type PolyDataSet = {
