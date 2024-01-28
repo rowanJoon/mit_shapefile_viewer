@@ -4,16 +4,49 @@
         <meta charset="UTF-8" />
         <title>Simple Shape Viewer</title>
         <style>
+            .canvas-container {
+                display: flex;
+            }
+            .filename-container {
+                width: 500px;
+                height: 500px;
+                border: 1px solid;
+                margin-right: 20px;
+            }
+            .canvasAndText-container {
+                display: flex;
+                justify-content: flex-end;
+            }
+            .infoText-container {
+                margin-left: 20px;
+            }
             #fileInput {
                 margin-bottom: 10px;
+            }
+            #featureInfoArea {
+                width: 500px;
+                height: 500px;
+                border: 1px solid;
             }
         </style>
     </head>
     <body>
-        <div>
-            <input type="file" id="fileInput" multiple />
+        <div class="container">
+            <div class="fileSelect-container">
+                <input type="file" id="fileInput" multiple />
+            </div>
+            <div class="canvasAndText-container">
+                <div class="filename-container" id="filename-chkField"></div>
+                <div class="canvas-container">
+                    <canvas id="featureCanvas" width="800px" height="500px" style="border: 1px solid;"></canvas>
+                </div>
+                <div class="infoText-container">
+                    <label for="featureInfoArea">
+                        <textarea id="featureInfoArea"></textarea>
+                    </label>
+                </div>
+            </div>
         </div>
-        <canvas id="featureCanvas" width="800px" height="500px" style="border: 1px solid"></canvas>
         <script type="module" src="./dist/app.js"></script>
     </body>
 </html>

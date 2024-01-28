@@ -1,16 +1,17 @@
-import { GeoCanvasInteract, ShapeHeader } from './type/Type.js';
-import { DataLoader } from './DataLoader.js';
-import { ShapeFileReader } from './ShapefileReader.js';
-import { Point } from './feature/Point.js';
-import { Poly } from './feature/Poly.js';
-import { FileReaderPromise } from './util/FileReader.js';
-import { EventDelegator } from './util/EventDelegator.js';
-import { MouseWheelEventHandler } from './handler/MouseWheelEventHandler.js';
-import { MouseDownEventHandler } from './handler/MouseDownEventHandler.js';
-import { MouseUpEventHandler } from './handler/MouseUpEventHandler.js';
-import { MouseMoveEventHandler } from './handler/MouseMoveEventHandler.js';
-import { ShapeRender } from "./render/ShapeRender.js";
-import { Layer } from "./render/Layer.js";
+import {GeoCanvasInteract, ShapeHeader} from './type/Type.js';
+import {DataLoader} from './DataLoader.js';
+import {ShapeFileReader} from './ShapefileReader.js';
+import {Point} from './feature/Point.js';
+import {Poly} from './feature/Poly.js';
+import {FileReaderPromise} from './util/FileReader.js';
+import {EventDelegator} from './util/EventDelegator.js';
+import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler.js';
+import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
+import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
+import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
+import {ShapeRender} from "./render/ShapeRender.js";
+import {Layer} from "./render/Layer.js";
+import {DbasefileReader} from "./DbasefileReader.js";
 
 class App {
     private shapeRender: ShapeRender | undefined;
@@ -43,19 +44,49 @@ class App {
 
     private async handleFileSelect(event: Event): Promise<void> {
         const target: HTMLInputElement = event.target as HTMLInputElement;
+        let hasCheckboxCreated: boolean = false;
 
         if (target.files && target.files.length > 0) {
             const selectedFiles: FileList = target.files;
 
             for (let i = 0; i < selectedFiles.length; i++) {
                 const file: File = selectedFiles[i];
+                const fileName: string = file.name.split('.')[0];
+                const fileExtension: string = file.name.split('.')[1];
                 const arrayBuffer: ArrayBuffer = await FileReaderPromise.readFileAsArrayBuffer(file);
-                this.loadAndDrawShape(arrayBuffer);
+
+                if (!hasCheckboxCreated) {
+                    this.createFilenameChkBox(fileName);
+                    hasCheckboxCreated = true;
+                }
+
+                switch(fileExtension) {
+                    case 'shp':
+                        this.loadAndRenderShape(arrayBuffer);
+                        break;
+                    case 'dbf':
+                        this.loadAndExpressionDbf(arrayBuffer);
+                        break;
+                }
             }
         }
     }
 
-    private loadAndDrawShape(arrayBuffer: ArrayBuffer): void {
+    private createFilenameChkBox(fileName: string): void {
+        const shapeFileNameField = document.getElementById('filename-chkField') as HTMLDivElement;
+        const chkbox = document.createElement('input');
+        const label = document.createElement('label');
+
+        chkbox.type = 'checkbox';
+        chkbox.id = fileName;
+        label.htmlFor = fileName;
+        label.appendChild(document.createTextNode(fileName))
+
+        shapeFileNameField.appendChild(chkbox);
+        shapeFileNameField.appendChild(label);
+    }
+
+    private loadAndRenderShape(arrayBuffer: ArrayBuffer): void {
         const view: DataView = new DataView(arrayBuffer);
         const header: ShapeHeader = ShapeFileReader.getHeader(view);
         let shape: Point | Poly;
@@ -111,6 +142,18 @@ class App {
 
     private removeMouseEventHandler(): void {
         this.eventDelegator.removeAllEventListeners();
+    }
+
+    private loadAndExpressionDbf(arrayBuffer: ArrayBuffer): void {
+        const dbfReader: DbasefileReader = new DbasefileReader(arrayBuffer);
+        const header = dbfReader.getHeader();
+        const contents = dbfReader.getContents();
+        const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
+
+        const jsonData = { data: contents };
+        jsonTextField.value = JSON.stringify(jsonData, null, 2);
+        console.log('dbf header fields: ', header);
+        console.log('dbf contents fields: ', contents)
     }
 }
 
