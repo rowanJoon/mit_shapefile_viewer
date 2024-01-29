@@ -73,9 +73,9 @@ class App {
     }
 
     private createFilenameChkBox(fileName: string): void {
-        const shapeFileNameField = document.getElementById('filename-chkField') as HTMLDivElement;
-        const chkbox = document.createElement('input');
-        const label = document.createElement('label');
+        const shapeFileNameField: HTMLDivElement = document.getElementById('filename-chkField') as HTMLDivElement;
+        const chkbox: HTMLInputElement = document.createElement('input');
+        const label: HTMLLabelElement = document.createElement('label');
 
         chkbox.type = 'checkbox';
         chkbox.id = fileName;
@@ -145,15 +145,14 @@ class App {
     }
 
     private loadAndExpressionDbf(arrayBuffer: ArrayBuffer): void {
+        const view: DataView = new DataView(arrayBuffer);
         const dbfReader: DbasefileReader = new DbasefileReader(arrayBuffer);
         const header = dbfReader.getHeader();
-        const contents = dbfReader.getContents();
+        const record = dbfReader.getRecord();
         const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
 
-        const jsonData = { data: contents };
+        const jsonData = { data: record };
         jsonTextField.value = JSON.stringify(jsonData, null, 2);
-        console.log('dbf header fields: ', header);
-        console.log('dbf contents fields: ', contents)
     }
 }
 
