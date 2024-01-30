@@ -9,7 +9,7 @@ interface RecordData {
     [fieldName: string]: string | number;
 }
 
-export class DbasefileReader {
+export class DbaseLoader {
     private fields: DbfField[] = [];
     private offset: number = 32;
     private readonly arrayBuffer: ArrayBuffer;
@@ -19,7 +19,7 @@ export class DbasefileReader {
         this.arrayBuffer = arrayBuffer;
         this.dbfUint8Array = new Uint8Array(this.arrayBuffer);
     }
-    getHeader(): DbfField[] {
+    getDbaseField(): DbfField[] {
         const dbfArray: Uint8Array = this.dbfUint8Array;
         let offset: number = this.offset;
 
@@ -45,7 +45,9 @@ export class DbasefileReader {
         return this.fields;
     }
 
-    getRecord(): RecordData[] {
+    readRecords(): RecordData[] {
+        this.getDbaseField();
+
         const records: RecordData[] = [];
         const dbfArray: Uint8Array = this.dbfUint8Array;
         let recordOffset: number = this.offset;
@@ -53,7 +55,7 @@ export class DbasefileReader {
         recordOffset += 1;
 
         while (recordOffset < 1466) {
-        // while (recordOffset < dbfArray.length && dbfArray[recordOffset] !== 0x1A) {
+            // while (recordOffset < dbfArray.length && dbfArray[recordOffset] !== 0x1A) {
             const record: RecordData = {};
             let fieldLength: number = 0;
 
@@ -63,17 +65,17 @@ export class DbasefileReader {
                     field.decimalCount && field.decimalCount !== 0 ?
                         dbfArray.subarray(recordOffset, recordOffset + field.decimalCount) :
                         dbfArray.subarray(recordOffset, recordOffset + field.length);
-                const fieldStr: string = Array.from(fieldData).map(byte => String.fromCharCode(byte)).join('').trim();
 
-                if (field.type === 'N') {
-                    record[field.name] = Number(fieldStr);
-                    recordOffset += 1;
+                switch (field.type) {
+                    case 'C':
+                        record[field.name] = this.readRecordForString(fieldData);
+                        break;
+                    case 'N':
+                        record[field.name] = Number(this.readRecordForString(fieldData));
+                        recordOffset += 1;
 
-                    if (index === this.fields.length - 1) {
-                        recordOffset -= 1;
-                    }
-                } else {
-                    record[field.name] = fieldStr;
+                        if (index === this.fields.length - 1) recordOffset -= 1;
+                        break;
                 }
 
                 recordOffset += field.length;
@@ -85,5 +87,13 @@ export class DbasefileReader {
 
         console.log('contents: ', records);
         return records;
+    }
+
+    readRecordForString(fieldData: Uint8Array) {
+        return Array.from(fieldData).map(byte => String.fromCharCode(byte)).join('').trim();
+    }
+
+    readRecordForNumber() {
+
     }
 }

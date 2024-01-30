@@ -1,6 +1,6 @@
 import {GeoCanvasInteract, ShapeHeader} from './type/Type.js';
-import {DataLoader} from './DataLoader.js';
-import {ShapeFileReader} from './ShapefileReader.js';
+import {ShapeDataLoader} from './ShapeDataLoader.js';
+import {ShapeReader} from './ShapeReader.js';
 import {Point} from './feature/Point.js';
 import {Poly} from './feature/Poly.js';
 import {FileReaderPromise} from './util/FileReader.js';
@@ -11,7 +11,7 @@ import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
 import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
 import {ShapeRender} from "./render/ShapeRender.js";
 import {Layer} from "./render/Layer.js";
-import {DbasefileReader} from "./DbasefileReader.js";
+import {DbaseLoader} from "./DbaseDataLoader.js";
 
 class App {
     private shapeRender: ShapeRender | undefined;
@@ -88,7 +88,7 @@ class App {
 
     private loadAndRenderShape(arrayBuffer: ArrayBuffer): void {
         const view: DataView = new DataView(arrayBuffer);
-        const header: ShapeHeader = ShapeFileReader.getHeader(view);
+        const header: ShapeHeader = ShapeReader.getHeader(view);
         let shape: Point | Poly;
 
         if (header.shapeType === 1) {
@@ -105,12 +105,12 @@ class App {
     }
 
     private loadPoint(arrayBuffer: ArrayBuffer, header: ShapeHeader): Point {
-        const pointData: DataLoader = new DataLoader(arrayBuffer);
+        const pointData: ShapeDataLoader = new ShapeDataLoader(arrayBuffer);
         return pointData.loadPointData(header, 100);
     }
 
     private loadPoly(arrayBuffer: ArrayBuffer, header: ShapeHeader): Poly {
-        const polyData: DataLoader = new DataLoader(arrayBuffer);
+        const polyData: ShapeDataLoader = new ShapeDataLoader(arrayBuffer);
         return polyData.loadPolyData(header, 100);
     }
 
@@ -145,10 +145,8 @@ class App {
     }
 
     private loadAndExpressionDbf(arrayBuffer: ArrayBuffer): void {
-        const view: DataView = new DataView(arrayBuffer);
-        const dbfReader: DbasefileReader = new DbasefileReader(arrayBuffer);
-        const header = dbfReader.getHeader();
-        const record = dbfReader.getRecord();
+        const dbaseLoader = new DbaseLoader(arrayBuffer);
+        const record = dbaseLoader.readRecords();
         const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
 
         const jsonData = { data: record };
