@@ -1,6 +1,6 @@
 import { ShapeHeader, BoundingBox } from './type/Type.js';
 
-export class ShapeFileReader {
+export class ShapeReader {
     static getBoundingBox(view: DataView): BoundingBox {
         return {
             xMin: view.getFloat64(36, true),
