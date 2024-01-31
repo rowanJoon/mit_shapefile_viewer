@@ -1,4 +1,12 @@
-interface DbfField {
+interface DbaseRecordHeader {
+    version: number;
+    lastUpdateDate: string;
+    recordCount: number;
+    headerLength: number;
+    recordLength: number;
+}
+
+interface DbaseFieldDescriptor {
     name: string;
     type: string;
     length: number;
@@ -10,18 +18,43 @@ interface RecordData {
 }
 
 export class DbaseLoader {
-    private fields: DbfField[] = [];
-    private offset: number = 32;
     private readonly arrayBuffer: ArrayBuffer;
     private readonly dbfUint8Array: Uint8Array;
+    private readonly view: DataView;
 
     constructor(arrayBuffer: ArrayBuffer) {
         this.arrayBuffer = arrayBuffer;
         this.dbfUint8Array = new Uint8Array(this.arrayBuffer);
+        this.view = new DataView(this.dbfUint8Array.buffer);
     }
-    getDbaseField(): DbfField[] {
+
+    private dbaseRecordHeader(): DbaseRecordHeader {
+        const view: DataView = this.view;
+        const version: number = view.getUint8(0);
+        const year: number = view.getUint8(1) + 1900;
+        const month: number = view.getUint8(2);
+        const day: number = view.getUint8(3);
+        const lastUpdateDate: string = year + '-' + month + '-' + day;
+        const recordCount: number = this.view.getInt32(4, true);
+        const headerLength: number = this.view.getInt16(8, true);
+        const recordLength: number = this.view.getInt16(10, true);
+
+        const recordHeader: DbaseRecordHeader = {
+            version: version,
+            lastUpdateDate: lastUpdateDate,
+            recordCount: recordCount,
+            headerLength: headerLength,
+            recordLength: recordLength
+        };
+        console.log('record header : ', recordHeader);
+
+        return recordHeader;
+    }
+
+    private dbaseFieldDescriptor(): DbaseFieldDescriptor[] {
+        const fieldDescriptorsArray: DbaseFieldDescriptor[] = [];
         const dbfArray: Uint8Array = this.dbfUint8Array;
-        let offset: number = this.offset;
+        let offset: number = 32;
 
         while (dbfArray[offset] !== 0x0D) {
             const nameBytes: Uint8Array = dbfArray.subarray(offset, offset + 10);
@@ -31,61 +64,62 @@ export class DbaseLoader {
 
             const name: string = Array.from(nameBytes).map(byte => String.fromCharCode(byte)).join('').replace(/\0/g, '');
             const decimalCount: number = decimalCountByte <= 0xFF ? decimalCountByte : 0;
-            const field: DbfField = {
+            const field: DbaseFieldDescriptor = {
                 name: name,
                 type: typeByte,
                 length: lengthByte,
                 decimalCount: decimalCount
             };
 
-            this.fields.push(field);
-            this.offset += 32;
+            fieldDescriptorsArray.push(field);
             offset += 32;
         }
 
-        return this.fields;
+        console.log('field descriptors array : ', fieldDescriptorsArray);
+
+        return fieldDescriptorsArray;
     }
 
-    readRecords(): RecordData[] {
-        this.getDbaseField();
+    public readRecords(): RecordData[] {
+        const recordHeader: DbaseRecordHeader = this.dbaseRecordHeader();
+        const fieldDescriptorsArray: DbaseFieldDescriptor[] = this.dbaseFieldDescriptor();
+        const headerLength = recordHeader.headerLength;
+        const recordArray: RecordData[] = [];
+        const dbaseArray: Uint8Array = this.dbfUint8Array;
+        const dbaseRecordsArray: Uint8Array = dbaseArray.subarray(headerLength, dbaseArray.length);
+        let recordOffset: number = 0;
 
-        const headerLength = this.offset;
-        const recordLengthByte = this.dbfUint8Array.subarray(8, 10);
-        const recordLength = recordLengthByte[0] + (recordLengthByte[1] << 8);
+        while (recordOffset < dbaseRecordsArray.length) {
+            const recordData: RecordData = {};
+            let fieldOffset: number = 1;
 
-        const records: RecordData[] = [];
-        const dbfArray = this.dbfUint8Array.subarray(headerLength, this.dbfUint8Array.length);
-        let recordOffset = 0;
-
-        while (recordOffset + recordLength <= 1000) {
-            const record: RecordData = {};
-
-            for (const field of this.fields) {
-                const fieldValue = dbfArray.subarray(recordOffset, recordOffset + field.length);
+            for (const field of fieldDescriptorsArray) {
+                const startOffset = recordOffset + fieldOffset;
+                const endOffset = recordOffset + fieldOffset + field.length;
+                const fieldValue = dbaseRecordsArray.subarray(startOffset, endOffset);
 
                 switch (field.type) {
                     case 'C':
-                        record[field.name] = this.readRecordForString(fieldValue);
+                        recordData[field.name] = this.readRecordForString(fieldValue);
                         break;
                     case 'N':
-                        record[field.name] = Number(this.readRecordForString(fieldValue));
+                        recordData[field.name] = Number(this.readRecordForString(fieldValue));
                         break;
                 }
 
-                console.log('single record: ', record);
-                records.push(record);
-                recordOffset += field.length;
+                fieldOffset += field.length;
             }
 
-            recordOffset += recordOffset;
+            recordArray.push(recordData);
+            recordOffset += fieldOffset;
         }
 
-        console.log('records: ', records);
+        console.log('record array : ', recordArray);
 
-        return records;
+        return recordArray;
     }
 
-    readRecordForString(fieldData: Uint8Array) {
+    readRecordForString(fieldData: Uint8Array): string {
         return Array.from(fieldData).map(byte => String.fromCharCode(byte)).join('').trim();
     }
 }
