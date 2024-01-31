@@ -41,6 +41,12 @@ export class ShapeRenderEngine {
         }
     }
 
+    strokeColor(color: string): void {
+        if (this.ctx) {
+            this.ctx.strokeStyle = color;
+        }
+    }
+
     setLineWidth(lineWidth: number): void {
         if (this.ctx) {
             this.ctx.lineWidth = lineWidth;
@@ -81,6 +87,7 @@ export class ShapeRenderEngine {
         if (this.ctx) {
             this.beginPath();
             this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            this.ctx.fillStyle = '#FF66FF';
             this.fill();
             this.closePath();
         }

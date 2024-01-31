@@ -10,6 +10,10 @@ export class Layer {
         }
     }
 
+    getGeoObject(): (Point | Poly)[] {
+        return this.geoObjects;
+    }
+
     sizeGeoObject(): number {
         return this.geoObjects.length;
     }
