@@ -87,7 +87,6 @@ export class ShapeRenderEngine {
         if (this.ctx) {
             this.beginPath();
             this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            this.ctx.fillStyle = '#FF66FF';
             this.fill();
             this.closePath();
         }

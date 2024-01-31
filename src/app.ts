@@ -1,14 +1,15 @@
-import {GeoCanvasInteract, ShapeHeader} from './type/Type.js';
+import {BoundingBox, GeoCanvasInteract, Shape, ShapeHeader} from './type/Type.js';
 import {ShapeDataLoader} from './ShapeDataLoader.js';
 import {ShapeReader} from './ShapeReader.js';
 import {Point} from './feature/Point.js';
 import {Poly} from './feature/Poly.js';
 import {FileReaderPromise} from './util/FileReader.js';
 import {EventDelegator} from './util/EventDelegator.js';
-import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler.js';
+import {MouseClickEventHandler} from "./handler/MouseClickEventHandler.js";
 import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
-import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
 import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
+import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
+import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler.js';
 import {ShapeRender} from "./render/ShapeRender.js";
 import {Layer} from "./render/Layer.js";
 import {DbaseLoader} from "./DbaseDataLoader.js";
@@ -44,20 +45,20 @@ class App {
 
     private async handleFileSelect(event: Event): Promise<void> {
         const target: HTMLInputElement = event.target as HTMLInputElement;
-        let hasCheckboxCreated: boolean = false;
 
         if (target.files && target.files.length > 0) {
             const selectedFiles: FileList = target.files;
+            const chkName = new Set();
 
-            for (let i = 0; i < selectedFiles.length; i++) {
+            for (let i = 0, len = selectedFiles.length; i < len; i++) {
                 const file: File = selectedFiles[i];
                 const fileName: string = file.name.split('.')[0];
                 const fileExtension: string = file.name.split('.')[1];
                 const arrayBuffer: ArrayBuffer = await FileReaderPromise.readFileAsArrayBuffer(file);
 
-                if (!hasCheckboxCreated) {
+                if (!chkName.has(fileName)) {
                     this.createFilenameChkBox(fileName);
-                    hasCheckboxCreated = true;
+                    chkName.add(fileName);
                 }
 
                 switch(fileExtension) {
@@ -74,15 +75,16 @@ class App {
 
     private createFilenameChkBox(fileName: string): void {
         const shapeFileNameField: HTMLDivElement = document.getElementById('filename-chkField') as HTMLDivElement;
-        const chkbox: HTMLInputElement = document.createElement('input');
+        const checkbox: HTMLInputElement = document.createElement('input');
         const label: HTMLLabelElement = document.createElement('label');
 
-        chkbox.type = 'checkbox';
-        chkbox.id = fileName;
+        checkbox.type = 'checkbox';
+        checkbox.id = fileName;
+        checkbox.checked = true;
         label.htmlFor = fileName;
         label.appendChild(document.createTextNode(fileName))
 
-        shapeFileNameField.appendChild(chkbox);
+        shapeFileNameField.appendChild(checkbox);
         shapeFileNameField.appendChild(label);
     }
 
@@ -94,14 +96,14 @@ class App {
         if (header.shapeType === 1) {
             shape = this.loadPoint(arrayBuffer, header);
             this.renderShape(shape);
+            this.setMouseEvent(shape);
         } else if (header.shapeType === 3 || header.shapeType === 5) {
             shape = this.loadPoly(arrayBuffer, header);
             this.renderShape(shape);
+            this.setMouseEvent(shape);
         } else {
             console.error('Cannot Read ShapeType!');
         }
-
-        this.setMouseEvent();
     }
 
     private loadPoint(arrayBuffer: ArrayBuffer, header: ShapeHeader): Point {
@@ -119,24 +121,30 @@ class App {
         this.shapeRender.render(this.geoCanvasInteract);
     }
 
-    private setMouseEvent(): void {
+    private setMouseEvent(shape: Shape): void {
         if (this.eventDelegator.eventListeners.size !== 0) {
             this.removeMouseEventHandler();
         }
-        this.addMouseEventHandler();
+        this.addMouseEventHandler(shape);
     }
 
-    private addMouseEventHandler(): void {
+    private addMouseEventHandler(shape: Shape): void {
         if (this.shapeRender !== undefined) {
-            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(this.shapeRender, this.geoCanvasInteract);
-            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(this.shapeRender, this.geoCanvasInteract);
-            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(this.shapeRender, this.geoCanvasInteract);
-            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(this.shapeRender, this.geoCanvasInteract);
+            const shapeRender: ShapeRender = this.shapeRender;
+            const boundingBox: BoundingBox = shape.shapeHeader.boundingBox;
+            const geoCanvasInteract: GeoCanvasInteract = this.geoCanvasInteract;
 
-            this.eventDelegator.addEventListener('wheel', mouseWheelEventHandler);
+            const mouseClickEventHandler: MouseClickEventHandler = new MouseClickEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+
+            this.eventDelegator.addEventListener('click', mouseClickEventHandler);
             this.eventDelegator.addEventListener('mousedown', mouseDownEventHandler);
             this.eventDelegator.addEventListener('mousemove', mouseMoveEventHandler);
             this.eventDelegator.addEventListener('mouseup', mouseUpEventHandler);
+            this.eventDelegator.addEventListener('wheel', mouseWheelEventHandler);
         }
     }
 
@@ -146,9 +154,11 @@ class App {
 
     private loadAndExpressionDbf(arrayBuffer: ArrayBuffer): void {
         const dbaseLoader = new DbaseLoader(arrayBuffer);
-        const record = dbaseLoader.readRecords();
+        const recordsArray = dbaseLoader.readRecords();
+        this.layer.addGeoData(recordsArray);
+        const geoDataArray = this.layer.getGeoData();
         const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
-        const jsonData = { data: record };
+        const jsonData = { data: geoDataArray };
 
         jsonTextField.value = JSON.stringify(jsonData, null, 2);
     }

@@ -48,3 +48,7 @@ export interface Shape {
     shapeHeader: ShapeHeader;
     shapeContents: ShapeContents;
 }
+
+export interface RecordData {
+    [fieldName: string]: string | number;
+}

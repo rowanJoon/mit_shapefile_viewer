@@ -8,6 +8,8 @@ export class MouseMoveEventHandler extends GeoCanvasEventHandler {
 
             this.geoCanvasInteract.panX = deltaX;
             this.geoCanvasInteract.panY = deltaY;
+
+            this.shapeRender.render(this.geoCanvasInteract);
         }
     }
 }

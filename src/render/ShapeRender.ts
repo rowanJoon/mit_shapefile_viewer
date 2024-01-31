@@ -11,24 +11,18 @@ export class ShapeRender extends ShapeRenderService {
         this.layer = layer;
     }
 
-    render(geoCanvasInteract: GeoCanvasInteract): void {
-        const shapeType: number = this.shape.shapeHeader.shapeType;
-        const boundingBox: BoundingBox = this.shape.shapeHeader.boundingBox;
-        const contents: Coordinate[] | PolyDataSet = this.shape.shapeContents.contents;
-
+    public render(geoCanvasInteract: GeoCanvasInteract): void {
         this.layer.addGeoObject(this.shape);
         this.checkInitRenderer();
-        this.renderingCanvas(shapeType, contents, boundingBox, geoCanvasInteract);
+        this.renderingCanvas(geoCanvasInteract);
 
         console.log(this.layer);
     }
 
-    renderingCanvas(
-        shapeType: number,
-        contents: Coordinate[] | PolyDataSet,
-        boundingBox: BoundingBox,
+    private renderingCanvas(
         geoCanvasInteract: GeoCanvasInteract
     ): void {
+        const pageCoordinates = [];
         let extractCoord: Coordinate;
         let hasCleared: boolean = false;
 
@@ -44,15 +38,18 @@ export class ShapeRender extends ShapeRenderService {
             }
 
             const contents: Coordinate[] | PolyDataSet = this.layer.geoObjects[i].shapeContents.contents;
+            const boundingBox: BoundingBox = this.shape.shapeHeader.boundingBox;
+            const polyShapeType: number = this.layer.getGeoObject()[i].shapeHeader.shapeType;
 
             if (Array.isArray(contents)) {
                 for (const coord of contents) {
                     extractCoord = this.extractCoordinates(coord, boundingBox);
                     this.renderer.drawPoint(extractCoord.x, extractCoord.y, geoCanvasInteract.radius);
+                    this.setShapeStyleFromType(polyShapeType);
+                    pageCoordinates.push(extractCoord);
                 }
             } else {
                 const partsCoordinates: Array<Coordinate>[] = contents.PartsCoordinates;
-                const polyShapeType = this.layer.getGeoObject()[i].shapeHeader.shapeType;
                 this.renderer.setLineWidth(geoCanvasInteract.lineWidth);
 
                 partsCoordinates.forEach(coordPair => {
@@ -63,14 +60,10 @@ export class ShapeRender extends ShapeRenderService {
                         this.renderer.drawPoly(extractCoord.x, extractCoord.y, idx);
                     });
 
-                    if (polyShapeType === 3) {
-                        this.renderer.strokeColor('#99FF99');
-                    }
+                    this.setShapeStyleFromType(polyShapeType);
 
                     if (polyShapeType === 5) {
-                        this.renderer.strokeColor('black');
                         this.renderer.fill();
-                        this.renderer.fillColor('#FFFFCC');
                     }
 
                     this.renderer.stroke();
@@ -79,6 +72,20 @@ export class ShapeRender extends ShapeRenderService {
         }
 
         this.restoreContext();
+        console.log(pageCoordinates);
     }
 
+    private setShapeStyleFromType(shapeType: number) {
+        switch (shapeType) {
+            case 1:
+                this.renderer.fillColor('#339933');
+                break;
+            case 3:
+                this.renderer.strokeColor('#6666CC');
+                break;
+            case 5:
+                this.renderer.strokeColor('#996633');
+                this.renderer.fillColor('#FFCC00');
+        }
+    }
 }

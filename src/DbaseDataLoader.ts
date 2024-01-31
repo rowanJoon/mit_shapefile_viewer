@@ -1,3 +1,5 @@
+import {RecordData} from './type/Type.js';
+
 interface DbaseRecordHeader {
     version: number;
     lastUpdateDate: string;
@@ -11,10 +13,6 @@ interface DbaseFieldDescriptor {
     type: string;
     length: number;
     decimalCount: number;
-}
-
-interface RecordData {
-    [fieldName: string]: string | number;
 }
 
 export class DbaseLoader {
