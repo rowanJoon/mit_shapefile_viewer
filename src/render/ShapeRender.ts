@@ -52,6 +52,7 @@ export class ShapeRender extends ShapeRenderService {
                 }
             } else {
                 const partsCoordinates: Array<Coordinate>[] = contents.PartsCoordinates;
+                const polyShapeType = this.layer.getGeoObject()[i].shapeHeader.shapeType;
                 this.renderer.setLineWidth(geoCanvasInteract.lineWidth);
 
                 partsCoordinates.forEach(coordPair => {
@@ -62,9 +63,14 @@ export class ShapeRender extends ShapeRenderService {
                         this.renderer.drawPoly(extractCoord.x, extractCoord.y, idx);
                     });
 
-                    if (shapeType === 5) {
+                    if (polyShapeType === 3) {
+                        this.renderer.strokeColor('#99FF99');
+                    }
+
+                    if (polyShapeType === 5) {
+                        this.renderer.strokeColor('black');
                         this.renderer.fill();
-                        this.renderer.fillColor('green');
+                        this.renderer.fillColor('#FFFFCC');
                     }
 
                     this.renderer.stroke();
