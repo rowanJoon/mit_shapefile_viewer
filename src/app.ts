@@ -148,8 +148,8 @@ class App {
         const dbaseLoader = new DbaseLoader(arrayBuffer);
         const record = dbaseLoader.readRecords();
         const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
-
         const jsonData = { data: record };
+
         jsonTextField.value = JSON.stringify(jsonData, null, 2);
     }
 }
