@@ -1,5 +1,5 @@
 export class FileReaderPromise {
-    static readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
+    public static readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
         return new Promise((resolve, reject): void => {
             const reader: FileReader = new FileReader();
 

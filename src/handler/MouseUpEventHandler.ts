@@ -1,4 +1,4 @@
-import { GeoCanvasEventHandler } from './GeoCanvasEventHandler.js';
+import { GeoCanvasEventHandler } from './GeoCanvasEventHandler';
 
 export class MouseUpEventHandler extends GeoCanvasEventHandler {
     handleEvent(e: MouseEvent): void {

@@ -2,7 +2,7 @@ export interface EventListener {
     handleEvent(event: Event): void;
 }
 
-export interface CustomEventListener extends EventListener {
+interface CustomEventListener extends EventListener {
     originalListener?: EventListener;
     wrappedHandler?: (event: Event) => void;
 }

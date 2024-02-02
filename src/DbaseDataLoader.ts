@@ -1,4 +1,4 @@
-import {RecordData} from './type/Type.js';
+import {RecordData} from '../types';
 
 interface DbaseRecordHeader {
     version: number;
@@ -26,7 +26,7 @@ export class DbaseLoader {
         this.view = new DataView(this.dbfUint8Array.buffer);
     }
 
-    private dbaseRecordHeader(): DbaseRecordHeader {
+    private _dbaseRecordHeader(): DbaseRecordHeader {
         const view: DataView = this.view;
         const version: number = view.getUint8(0);
         const year: number = view.getUint8(1) + 1900;
@@ -36,7 +36,6 @@ export class DbaseLoader {
         const recordCount: number = this.view.getInt32(4, true);
         const headerLength: number = this.view.getInt16(8, true);
         const recordLength: number = this.view.getInt16(10, true);
-
         const recordHeader: DbaseRecordHeader = {
             version: version,
             lastUpdateDate: lastUpdateDate,
@@ -44,12 +43,13 @@ export class DbaseLoader {
             headerLength: headerLength,
             recordLength: recordLength
         };
+
         console.log('record header : ', recordHeader);
 
         return recordHeader;
     }
 
-    private dbaseFieldDescriptor(): DbaseFieldDescriptor[] {
+    private _dbaseFieldDescriptor(): DbaseFieldDescriptor[] {
         const fieldDescriptorsArray: DbaseFieldDescriptor[] = [];
         const dbfArray: Uint8Array = this.dbfUint8Array;
         let offset: number = 32;
@@ -59,7 +59,6 @@ export class DbaseLoader {
             const typeByte: string = String.fromCharCode(dbfArray[offset + 11]);
             const lengthByte: number = dbfArray[offset + 16];
             const decimalCountByte: number = dbfArray[offset + 17];
-
             const name: string = Array.from(nameBytes).map(byte => String.fromCharCode(byte)).join('').replace(/\0/g, '');
             const decimalCount: number = decimalCountByte <= 0xFF ? decimalCountByte : 0;
             const field: DbaseFieldDescriptor = {
@@ -79,9 +78,9 @@ export class DbaseLoader {
     }
 
     public readRecords(): RecordData[] {
-        const recordHeader: DbaseRecordHeader = this.dbaseRecordHeader();
-        const fieldDescriptorsArray: DbaseFieldDescriptor[] = this.dbaseFieldDescriptor();
-        const headerLength = recordHeader.headerLength;
+        const recordHeader: DbaseRecordHeader = this._dbaseRecordHeader();
+        const fieldDescriptorsArray: DbaseFieldDescriptor[] = this._dbaseFieldDescriptor();
+        const headerLength: number = recordHeader.headerLength;
         const recordArray: RecordData[] = [];
         const dbaseArray: Uint8Array = this.dbfUint8Array;
         const dbaseRecordsArray: Uint8Array = dbaseArray.subarray(headerLength, dbaseArray.length);
@@ -92,9 +91,9 @@ export class DbaseLoader {
             let fieldOffset: number = 1;
 
             for (const field of fieldDescriptorsArray) {
-                const startOffset = recordOffset + fieldOffset;
-                const endOffset = recordOffset + fieldOffset + field.length;
-                const fieldValue = dbaseRecordsArray.subarray(startOffset, endOffset);
+                const startOffset: number = recordOffset + fieldOffset;
+                const endOffset: number = recordOffset + fieldOffset + field.length;
+                const fieldValue: Uint8Array = dbaseRecordsArray.subarray(startOffset, endOffset);
 
                 switch (field.type) {
                     case 'C':

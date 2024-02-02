@@ -1,6 +1,6 @@
-import { ShapeHeader, Coordinate, PolyDataSet } from './type/Type.js';
-import { Point } from './feature/Point.js';
-import { Poly } from './feature/Poly.js';
+import {ShapeHeader, Coordinate, PolyDataSet} from '../types';
+import {Point} from './feature/Point';
+import {Poly} from './feature/Poly';
 
 export class ShapeDataLoader {
     private arrayBuffer: ArrayBuffer;

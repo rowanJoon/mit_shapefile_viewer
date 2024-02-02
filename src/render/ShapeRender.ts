@@ -1,6 +1,6 @@
-import { BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape } from "../type/Type.js";
-import { ShapeRenderService } from "./ShapeRenderService.js";
-import { Layer } from "./Layer.js";
+import {BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape} from "../../types";
+import {ShapeRenderService} from "./ShapeRenderService";
+import {Layer} from "./Layer";
 
 export class ShapeRender extends ShapeRenderService {
     private readonly shape: Shape;
@@ -14,15 +14,15 @@ export class ShapeRender extends ShapeRenderService {
     public render(geoCanvasInteract: GeoCanvasInteract): void {
         this.layer.addGeoObject(this.shape);
         this.checkInitRenderer();
-        this.renderingCanvas(geoCanvasInteract);
+        this._renderingCanvas(geoCanvasInteract);
 
         console.log(this.layer);
     }
 
-    private renderingCanvas(
+    private _renderingCanvas(
         geoCanvasInteract: GeoCanvasInteract
     ): void {
-        const pageCoordinates = [];
+        const pageCoordinates: Coordinate[] = [];
         let extractCoord: Coordinate;
         let hasCleared: boolean = false;
 
@@ -45,7 +45,7 @@ export class ShapeRender extends ShapeRenderService {
                 for (const coord of contents) {
                     extractCoord = this.extractCoordinates(coord, boundingBox);
                     this.renderer.drawPoint(extractCoord.x, extractCoord.y, geoCanvasInteract.radius);
-                    this.setShapeStyleFromType(polyShapeType);
+                    this._setShapeStyleFromType(polyShapeType);
                     pageCoordinates.push(extractCoord);
                 }
             } else {
@@ -60,7 +60,8 @@ export class ShapeRender extends ShapeRenderService {
                         this.renderer.drawPoly(extractCoord.x, extractCoord.y, idx);
                     });
 
-                    this.setShapeStyleFromType(polyShapeType);
+                    this.renderer.closePath();
+                    this._setShapeStyleFromType(polyShapeType);
 
                     if (polyShapeType === 5) {
                         this.renderer.fill();
@@ -75,7 +76,7 @@ export class ShapeRender extends ShapeRenderService {
         console.log(pageCoordinates);
     }
 
-    private setShapeStyleFromType(shapeType: number) {
+    private _setShapeStyleFromType(shapeType: number): void {
         switch (shapeType) {
             case 1:
                 this.renderer.fillColor('#339933');

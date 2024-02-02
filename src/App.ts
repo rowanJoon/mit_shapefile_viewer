@@ -1,18 +1,18 @@
-import {BoundingBox, GeoCanvasInteract, Shape, ShapeHeader} from './type/Type.js';
-import {ShapeDataLoader} from './ShapeDataLoader.js';
-import {ShapeReader} from './ShapeReader.js';
-import {Point} from './feature/Point.js';
-import {Poly} from './feature/Poly.js';
-import {FileReaderPromise} from './util/FileReader.js';
-import {EventDelegator} from './util/EventDelegator.js';
-import {MouseClickEventHandler} from "./handler/MouseClickEventHandler.js";
-import {MouseDownEventHandler} from './handler/MouseDownEventHandler.js';
-import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler.js';
-import {MouseUpEventHandler} from './handler/MouseUpEventHandler.js';
-import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler.js';
-import {ShapeRender} from "./render/ShapeRender.js";
-import {Layer} from "./render/Layer.js";
-import {DbaseLoader} from "./DbaseDataLoader.js";
+import {BoundingBox, GeoCanvasInteract, Shape, ShapeHeader} from '../types';
+import {ShapeDataLoader} from './ShapeDataLoader';
+import {ShapeReader} from './ShapeReader';
+import {Point} from './feature/Point';
+import {Poly} from './feature/Poly';
+import {FileReaderPromise} from './util/FileReader';
+import {EventDelegator} from './util/EventDelegator';
+import {MouseClickEventHandler} from "./handler/MouseClickEventHandler";
+import {MouseDownEventHandler} from './handler/MouseDownEventHandler';
+import {MouseMoveEventHandler} from './handler/MouseMoveEventHandler';
+import {MouseUpEventHandler} from './handler/MouseUpEventHandler';
+import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler';
+import {ShapeRender} from "./render/ShapeRender";
+import {Layer} from "./render/Layer";
+import {DbaseLoader} from "./DbaseDataLoader";
 
 class App {
     private shapeRender: ShapeRender | undefined;

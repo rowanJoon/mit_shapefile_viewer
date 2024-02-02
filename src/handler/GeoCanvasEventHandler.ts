@@ -1,5 +1,5 @@
-import {BoundingBox, GeoCanvasInteract} from '../type/Type.js';
-import {EventListener} from '../util/EventDelegator.js';
+import {BoundingBox, GeoCanvasInteract} from '../../types';
+import {EventListener} from '../util/EventDelegator';
 import {ShapeRender} from "../render/ShapeRender";
 
 export abstract class GeoCanvasEventHandler implements EventListener {

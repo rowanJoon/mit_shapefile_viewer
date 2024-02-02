@@ -1,5 +1,5 @@
-import {GeoCanvasEventHandler} from './GeoCanvasEventHandler.js';
-import {Coordinate} from "../type/Type";
+import {GeoCanvasEventHandler} from './GeoCanvasEventHandler';
+import {Coordinate} from "../../types";
 
 export class MouseClickEventHandler extends GeoCanvasEventHandler {
     handleEvent(e: MouseEvent): void {

@@ -1,5 +1,5 @@
-import { ShapeRenderEngine } from './ShapeRenderEngine.js';
-import { BoundingBox, Coordinate } from "../type/Type";
+import { ShapeRenderEngine } from './ShapeRenderEngine';
+import { BoundingBox, Coordinate } from "../../types";
 
 export abstract class ShapeRenderService {
     protected renderer: ShapeRenderEngine;
@@ -8,34 +8,34 @@ export abstract class ShapeRenderService {
         this.renderer = new ShapeRenderEngine(canvasId);
     }
 
-    checkInitRenderer(): void {
+    public checkInitRenderer(): void {
         if (!this.renderer) {
             console.error('Renderer not initialized!');
             return;
         }
     }
 
-    clearContext(): void {
+    public clearContext(): void {
         this.renderer.clearRect();
     }
 
-    saveContext(): void {
+    public saveContext(): void {
         this.renderer.save();
     }
 
-    restoreContext(): void {
+    public restoreContext(): void {
         this.renderer.restore();
     }
 
-    scaleContext(minZoom: number, maxZoom: number): void {
+    public scaleContext(minZoom: number, maxZoom: number): void {
         this.renderer.scale(minZoom, maxZoom);
     }
 
-    translateContext(panX: number, panY: number): void {
+    public translateContext(panX: number, panY: number): void {
         this.renderer.translate(panX, panY);
     }
 
-    extractCoordinates(coordinate: Coordinate, boundingBox: BoundingBox): Coordinate {
+    public extractCoordinates(coordinate: Coordinate, boundingBox: BoundingBox): Coordinate {
         const x: number = ((coordinate.x - boundingBox.xMin) / (boundingBox.xMax - boundingBox.xMin)) * this.renderer.canvas.width;
         const y: number = this.renderer.canvas.height - ((coordinate.y - boundingBox.yMin) / (boundingBox.yMax - boundingBox.yMin)) * this.renderer.canvas.height;
 

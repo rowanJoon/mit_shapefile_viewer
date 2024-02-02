@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "lib": ["ES6", "DOM"],
+        "target": "es5",
+        "lib": ["dom"],
         "allowJs": true,
-        "module": "ESNext",
+        "module": "es6",
+        "moduleResolution": "node",
         "rootDir": "./src",
         "outDir": "./dist",
         "baseUrl": "./",
@@ -11,7 +12,6 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node",
         "resolveJsonModule": true,
         "declaration": false
     },
