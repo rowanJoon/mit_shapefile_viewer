@@ -1,4 +1,4 @@
-export class FileReaderPromise {
+export class FileBufferReader {
     public static readFileAsArrayBuffer(file: File): Promise<ArrayBuffer> {
         return new Promise((resolve, reject): void => {
             const reader: FileReader = new FileReader();

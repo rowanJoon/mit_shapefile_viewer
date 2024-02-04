@@ -3,7 +3,7 @@ import {ShapeDataLoader} from './ShapeDataLoader';
 import {ShapeReader} from './ShapeReader';
 import {Point} from './feature/Point';
 import {Poly} from './feature/Poly';
-import {FileReaderPromise} from './util/FileReader';
+import {FileBufferReader} from './util/FileBufferReader';
 import {EventDelegator} from './util/EventDelegator';
 import {MouseClickEventHandler} from "./handler/MouseClickEventHandler";
 import {MouseDownEventHandler} from './handler/MouseDownEventHandler';
@@ -13,12 +13,14 @@ import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler';
 import {ShapeRender} from "./render/ShapeRender";
 import {Layer} from "./render/Layer";
 import {DbaseLoader} from "./DbaseDataLoader";
+import {Rectangle, QuadTree} from "./handler/QuadTree";
 
 class App {
     private shapeRender: ShapeRender | undefined;
     private readonly geoCanvasInteract: GeoCanvasInteract;
     private eventDelegator: EventDelegator;
     private readonly layer: Layer;
+    private quadtree: QuadTree;
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -41,6 +43,9 @@ class App {
 
         this.eventDelegator = new EventDelegator(this.geoCanvasInteract.canvas);
         this.layer = new Layer();
+        const canvasRect = this.geoCanvasInteract.canvas.getBoundingClientRect();
+        const canvasBoundary = new Rectangle(0, 0, canvasRect.width, canvasRect.height);
+        this.quadtree = new QuadTree(canvasBoundary, 4);
     }
 
     private async handleFileSelect(event: Event): Promise<void> {
@@ -54,7 +59,7 @@ class App {
                 const file: File = selectedFiles[i];
                 const fileName: string = file.name.split('.')[0];
                 const fileExtension: string = file.name.split('.')[1];
-                const arrayBuffer: ArrayBuffer = await FileReaderPromise.readFileAsArrayBuffer(file);
+                const arrayBuffer: ArrayBuffer = await FileBufferReader.readFileAsArrayBuffer(file);
 
                 if (!chkName.has(fileName)) {
                     this.createFilenameChkBox(fileName);
@@ -92,15 +97,16 @@ class App {
         const view: DataView = new DataView(arrayBuffer);
         const header: ShapeHeader = ShapeReader.getHeader(view);
         let shape: Point | Poly;
+        const quadtree = this.quadtree;
 
         if (header.shapeType === 1) {
             shape = this.loadPoint(arrayBuffer, header);
-            this.renderShape(shape);
-            this.setMouseEvent(shape);
+            this.renderShape(shape, quadtree);
+            this.setMouseEvent(shape, quadtree);
         } else if (header.shapeType === 3 || header.shapeType === 5) {
             shape = this.loadPoly(arrayBuffer, header);
-            this.renderShape(shape);
-            this.setMouseEvent(shape);
+            this.renderShape(shape, quadtree);
+            this.setMouseEvent(shape, quadtree);
         } else {
             console.error('Cannot Read ShapeType!');
         }
@@ -116,29 +122,30 @@ class App {
         return polyData.loadPolyData(header, 100);
     }
 
-    private renderShape(shape: Point | Poly): void {
-        this.shapeRender = new ShapeRender('featureCanvas', shape, this.layer);
+    private renderShape(shape: Point | Poly, quadtree: QuadTree): void {
+        this.shapeRender = new ShapeRender('featureCanvas', shape, this.layer, quadtree);
         this.shapeRender.render(this.geoCanvasInteract);
     }
 
-    private setMouseEvent(shape: Shape): void {
+    private setMouseEvent(shape: Shape, quadtree: QuadTree): void {
         if (this.eventDelegator.eventListeners.size !== 0) {
             this.removeMouseEventHandler();
         }
-        this.addMouseEventHandler(shape);
+        this.addMouseEventHandler(shape, quadtree);
     }
 
-    private addMouseEventHandler(shape: Shape): void {
+    private addMouseEventHandler(shape: Shape, quadtree: QuadTree): void {
         if (this.shapeRender !== undefined) {
             const shapeRender: ShapeRender = this.shapeRender;
             const boundingBox: BoundingBox = shape.shapeHeader.boundingBox;
             const geoCanvasInteract: GeoCanvasInteract = this.geoCanvasInteract;
+            const layer: Layer = this.layer;
 
-            const mouseClickEventHandler: MouseClickEventHandler = new MouseClickEventHandler(shapeRender, boundingBox, geoCanvasInteract);
-            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(shapeRender, boundingBox, geoCanvasInteract);
-            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(shapeRender, boundingBox, geoCanvasInteract);
-            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(shapeRender, boundingBox, geoCanvasInteract);
-            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(shapeRender, boundingBox, geoCanvasInteract);
+            const mouseClickEventHandler: MouseClickEventHandler = new MouseClickEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
+            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
+            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
+            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
+            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
 
             this.eventDelegator.addEventListener('click', mouseClickEventHandler);
             this.eventDelegator.addEventListener('mousedown', mouseDownEventHandler);

@@ -1,28 +1,28 @@
 import {BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape} from "../../types";
 import {ShapeRenderService} from "./ShapeRenderService";
 import {Layer} from "./Layer";
+import {QuadTree} from "../handler/QuadTree";
 
 export class ShapeRender extends ShapeRenderService {
     private readonly shape: Shape;
     private readonly layer: Layer;
-    constructor(canvasId: string, shape: Shape, layer: Layer) {
+    private quadtree: QuadTree;
+    constructor(canvasId: string, shape: Shape, layer: Layer, quadtree: QuadTree) {
         super(canvasId);
         this.shape = shape;
         this.layer = layer;
+        this.quadtree = quadtree;
     }
 
     public render(geoCanvasInteract: GeoCanvasInteract): void {
         this.layer.addGeoObject(this.shape);
         this.checkInitRenderer();
         this._renderingCanvas(geoCanvasInteract);
-
-        console.log(this.layer);
     }
 
     private _renderingCanvas(
         geoCanvasInteract: GeoCanvasInteract
     ): void {
-        const pageCoordinates: Coordinate[] = [];
         let extractCoord: Coordinate;
         let hasCleared: boolean = false;
 
@@ -46,7 +46,8 @@ export class ShapeRender extends ShapeRenderService {
                     extractCoord = this.extractCoordinates(coord, boundingBox);
                     this.renderer.drawPoint(extractCoord.x, extractCoord.y, geoCanvasInteract.radius);
                     this._setShapeStyleFromType(polyShapeType);
-                    pageCoordinates.push(extractCoord);
+
+                    this.quadtree.insert(extractCoord);
                 }
             } else {
                 const partsCoordinates: Array<Coordinate>[] = contents.PartsCoordinates;
@@ -71,9 +72,9 @@ export class ShapeRender extends ShapeRenderService {
                 });
             }
         }
-
+        // this.quadtree.show(geoCanvasInteract);
+        console.log(this.quadtree);
         this.restoreContext();
-        console.log(pageCoordinates);
     }
 
     private _setShapeStyleFromType(shapeType: number): void {

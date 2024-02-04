@@ -9,6 +9,8 @@
         "dist/**/*"
     ],
     "scripts": {
+        "build": "webpack",
+        "build:watch": "webpack --watch",
         "start": "webpack serve --open --mode=development --hot"
     },
     "devDependencies": {
