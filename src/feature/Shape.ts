@@ -1,6 +1,6 @@
 import {Coordinate, BoundingBox} from "../../types";
 
-interface ShapeHeader {
+export interface ShapeHeader {
     fileCode: number;
     fileLength: number;
     version: number;
@@ -8,24 +8,24 @@ interface ShapeHeader {
     boundingBox: BoundingBox;
 }
 
-export interface PolyDataSet {
+export interface ShapeRecordContents {
+    recordContents: Coordinate[] | CommonPolyRecordContents
+}
+
+export interface CommonPolyRecordContents {
     Box: BoundingBox;
     NumParts: number;
     NumPoints: number;
     Parts: number[];
     PartsCoordinates: Array<Coordinate>[];
-};
-
-export interface ShapeContents {
-    contents: Coordinate[] | PolyDataSet;
 }
 
 export class Shape {
     shapeHeader: ShapeHeader;
-    shapeContents: ShapeContents;
+    shapeContents: ShapeRecordContents;
 
-    constructor(shapeHeader: ShapeHeader, shapeContents: ShapeContents) {
+    constructor(shapeHeader: ShapeHeader, ShapeRecordContents: ShapeRecordContents) {
         this.shapeHeader = shapeHeader;
-        this.shapeContents = shapeContents;
+        this.shapeContents = ShapeRecordContents;
     }
 }

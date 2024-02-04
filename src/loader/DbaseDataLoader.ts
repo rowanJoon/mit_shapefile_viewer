@@ -1,4 +1,4 @@
-import {RecordData} from '../types';
+import {RecordData} from '../../types';
 
 interface DbaseRecordHeader {
     version: number;

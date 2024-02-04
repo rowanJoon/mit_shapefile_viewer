@@ -1,12 +1,14 @@
-import {BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet, Shape} from "../../types";
+import {BoundingBox, Coordinate, GeoCanvasInteract} from "../../types";
 import {ShapeRenderService} from "./ShapeRenderService";
 import {Layer} from "./Layer";
 import {QuadTree} from "../handler/QuadTree";
+import {CommonPolyRecordContents, Shape,} from "../feature/Shape";
 
 export class ShapeRender extends ShapeRenderService {
     private readonly shape: Shape;
     private readonly layer: Layer;
-    private quadtree: QuadTree;
+    private readonly quadtree: QuadTree;
+
     constructor(canvasId: string, shape: Shape, layer: Layer, quadtree: QuadTree) {
         super(canvasId);
         this.shape = shape;
@@ -15,7 +17,9 @@ export class ShapeRender extends ShapeRenderService {
     }
 
     public render(geoCanvasInteract: GeoCanvasInteract): void {
-        this.layer.addGeoObject(this.shape);
+        const layer: Layer = this.layer;
+
+        layer.addLayer(this.shape);
         this.checkInitRenderer();
         this._renderingCanvas(geoCanvasInteract);
     }
@@ -23,7 +27,8 @@ export class ShapeRender extends ShapeRenderService {
     private _renderingCanvas(
         geoCanvasInteract: GeoCanvasInteract
     ): void {
-        let extractCoord: Coordinate;
+        const layer = this.layer;
+        let extractCoordinate: Coordinate;
         let hasCleared: boolean = false;
 
         this.clearContext();
@@ -31,34 +36,34 @@ export class ShapeRender extends ShapeRenderService {
         this.scaleContext(geoCanvasInteract.zoom, geoCanvasInteract.zoom);
         this.translateContext(geoCanvasInteract.panX, geoCanvasInteract.panY);
 
-        for (let i = 0, len = this.layer.sizeGeoObject(); i < len; i++) {
+        for (let i = 0, len = layer.getLayersLength(); i < len; i++) {
             if (!hasCleared) {
                 this.clearContext();
                 hasCleared = true;
             }
 
-            const contents: Coordinate[] | PolyDataSet = this.layer.geoObjects[i].shapeContents.contents;
-            const boundingBox: BoundingBox = this.shape.shapeHeader.boundingBox;
-            const polyShapeType: number = this.layer.getGeoObject()[i].shapeHeader.shapeType;
+            const boundingBox: BoundingBox = layer.getLayer()[i].shapeHeader.boundingBox;
+            const polyShapeType: number = layer.getLayer()[i].shapeHeader.shapeType;
+            const recordContents: Coordinate[] | CommonPolyRecordContents = layer.layerShape[i].shapeContents.recordContents;
 
-            if (Array.isArray(contents)) {
-                for (const coord of contents) {
-                    extractCoord = this.extractCoordinates(coord, boundingBox);
-                    this.renderer.drawPoint(extractCoord.x, extractCoord.y, geoCanvasInteract.radius);
+            if (Array.isArray(recordContents)) {
+                for (const coord of recordContents) {
+                    extractCoordinate = this.extractCoordinates(coord, boundingBox);
+                    this.renderer.drawPoint(extractCoordinate.x, extractCoordinate.y, geoCanvasInteract.radius);
                     this._setShapeStyleFromType(polyShapeType);
 
-                    this.quadtree.insert(extractCoord);
+                    this.quadtree.insert(extractCoordinate);
                 }
             } else {
-                const partsCoordinates: Array<Coordinate>[] = contents.PartsCoordinates;
+                const partsCoordinates: Array<Coordinate>[] = recordContents.PartsCoordinates;
                 this.renderer.setLineWidth(geoCanvasInteract.lineWidth);
 
                 partsCoordinates.forEach(coordPair => {
                     this.renderer.beginPath();
 
                     Object.values(coordPair).forEach((coord: Coordinate, idx: number) => {
-                        extractCoord = this.extractCoordinates(coord, boundingBox);
-                        this.renderer.drawPoly(extractCoord.x, extractCoord.y, idx);
+                        extractCoordinate = this.extractCoordinates(coord, boundingBox);
+                        this.renderer.drawPoly(extractCoordinate.x, extractCoordinate.y, idx);
                     });
 
                     this.renderer.closePath();

@@ -1,29 +1,31 @@
-import {Point} from "../feature/Point";
-import {Poly} from "../feature/Poly";
+// import {Point} from "../feature/Point";
+// import {Poly} from "../feature/Poly";
 import {RecordData} from "../../types";
+import {Shape} from "../feature/Shape";
 
 export class Layer {
-    public geoObjects: (Point | Poly)[] = [];
-    public geoData: Array<any> = [];
-    public addGeoObject(geoObject: Point | Poly): void {
-        if (!this.geoObjects.includes(geoObject)) {
-            this.geoObjects.push(geoObject);
+    public layerShape: (Shape)[] = [];
+    public layerData: Array<any> = [];
+
+    public addLayer(shape: Shape): void {
+        if (!this.layerShape.includes(shape)) {
+            this.layerShape.push(shape);
         }
     }
 
-    public addGeoData(geoData: RecordData[]) {
-        this.geoData.push(geoData);
+    public addLayerData(recordDbaseData: RecordData[]) {
+        this.layerData.push(recordDbaseData);
     }
 
-    public getGeoObject(): (Point | Poly)[] {
-        return this.geoObjects;
+    public getLayer(): (Shape)[] {
+        return this.layerShape;
     }
 
-    public getGeoData(): RecordData[] {
-        return this.geoData;
+    public getLayerData(): RecordData[] {
+        return this.layerData;
     }
 
-    public sizeGeoObject(): number {
-        return this.geoObjects.length;
+    public getLayersLength(): number {
+        return this.layerShape.length;
     }
 }

@@ -1,8 +1,9 @@
 import {GeoCanvasEventHandler} from './GeoCanvasEventHandler';
-import {BoundingBox, Coordinate, GeoCanvasInteract, PolyDataSet} from '../../types';
+import {BoundingBox, Coordinate, GeoCanvasInteract} from '../../types';
 import {Rectangle, QuadTree} from './QuadTree';
 import {ShapeRender} from "../render/ShapeRender";
 import {Layer} from "../render/Layer";
+import {CommonPolyRecordContents} from "../feature/Shape";
 
 export class MouseClickEventHandler extends GeoCanvasEventHandler {
     constructor(shapeRender: ShapeRender, boundingBox: BoundingBox, geoCanvasInteract: GeoCanvasInteract, layer: Layer, quadtree: QuadTree) {
@@ -23,18 +24,18 @@ export class MouseClickEventHandler extends GeoCanvasEventHandler {
         let points: Coordinate[] = [];
         this.quadtree.query(clickRectangle, points);
         const closeCoordinate = this.quadtree.queryClosest(mouseClickCoordinate);
-        const layer = this.layer.getGeoObject();
-        const data = this.layer.getGeoData()[0];
+        const layer = this.layer.getLayer();
+        const data = this.layer.getLayerData()[0];
         let index = 0;
 
         for (let i = 0; i < layer.length; i++) {
-            const contents: Coordinate[] | PolyDataSet = layer[i].shapeContents.contents;
+            const recordContents: Coordinate[] | CommonPolyRecordContents = layer[i].shapeContents.recordContents;
 
-            if (Array.isArray(contents)) {
-                for (let j = 0; j < contents.length; j++) {
-                    const coord = this.shapeRender.extractCoordinates(contents[j], this.boundingBox);
+            if (Array.isArray(recordContents)) {
+                for (let j = 0; j < recordContents.length; j++) {
+                    const coord = this.shapeRender.extractCoordinates(recordContents[j], this.boundingBox);
                     if (this.areNumbersEqual(coord.x, (closeCoordinate as Coordinate).x) && this.areNumbersEqual(coord.y, (closeCoordinate as Coordinate).y)) {
-                        console.log('겹치는 좌표: ', contents[j]);
+                        console.log('겹치는 좌표: ', recordContents[j]);
                         console.log('겹치는 화면 좌표: ', coord);
                         index = j;
                     }
