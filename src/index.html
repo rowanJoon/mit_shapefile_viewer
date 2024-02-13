@@ -4,9 +4,6 @@
         <meta charset="UTF-8" />
         <title>Simple Shape Viewer</title>
         <style>
-            .canvas-container {
-                display: flex;
-            }
             .filename-container {
                 width: 500px;
                 height: 500px;
@@ -15,7 +12,9 @@
             }
             .canvasAndText-container {
                 display: flex;
-                justify-content: flex-end;
+            }
+            .filename-container {
+                margin-right: 20px;
             }
             .infoText-container {
                 margin-left: 20px;
@@ -25,7 +24,7 @@
             }
             #featureInfoArea {
                 width: 500px;
-                height: 500px;
+                height: 497px;
                 border: 1px solid;
             }
         </style>
@@ -38,7 +37,7 @@
             <div class="canvasAndText-container">
                 <div class="filename-container" id="filename-chkField"></div>
                 <div class="canvas-container">
-                    <canvas id="featureCanvas" width="800px" height="500px" style="border: 1px solid;"></canvas>
+                    <canvas id="featureCanvas" width="1000px" height="500px" style="border: 1px solid;"></canvas>
                 </div>
                 <div class="infoText-container">
                     <label for="featureInfoArea">

@@ -29,7 +29,8 @@ export class ShapeDataLoader {
     public loadShapeData(): Shape {
         const shapeHeader: ShapeHeader = this.loadShapeHeader();
         const shapeType: number = shapeHeader.shapeType;
-        let shape;
+        let shape: Shape;
+
         switch (shapeType) {
             case 1:
                 shape = this._loadPointData(shapeHeader);
@@ -91,7 +92,7 @@ export class ShapeDataLoader {
     private _loadPolyData(shapeHeader: ShapeHeader): Shape {
         const arrayBuffer: ArrayBuffer = this.arrayBuffer;
         const dataView: DataView = this.dataView;
-        let recordContentsOffset = this.recordContentsOffset;
+        let recordContentsOffset: number = this.recordContentsOffset;
         let commonPolyRecordContents: CommonPolyRecordContents = {
             Box: {
                 xMin: 0,
@@ -101,7 +102,7 @@ export class ShapeDataLoader {
             },
             NumParts: 0,
             NumPoints: 0,
-            Parts: [0],
+            Parts: [],
             PartsCoordinates: []
         };
 
@@ -111,7 +112,6 @@ export class ShapeDataLoader {
             const recordContentsDataView: DataView = new DataView(recordContentsArrayBuffer);
             let xIndex: number = 48;
             let yIndex: number = 56;
-            let points: { x: number; y: number }[] = [];
 
             // Set Bbox
             commonPolyRecordContents.Box.xMin = recordContentsDataView.getFloat64(4, true);
@@ -124,12 +124,13 @@ export class ShapeDataLoader {
             commonPolyRecordContents.NumPoints = recordContentsDataView.getInt32(40, true);
 
             // Set Parts
-            for (let i = 0, len = commonPolyRecordContents.NumParts; i < len; i += 4) {
-                commonPolyRecordContents.Parts.push(recordContentsDataView.getInt32(i + 44, true));
+            for (let i = 0; i < commonPolyRecordContents.NumParts; i++) {
+                commonPolyRecordContents.Parts.push(recordContentsDataView.getInt32(44 + i * 4, true))
             }
 
             // Set Points
-            for (let i = 0, len = commonPolyRecordContents.NumPoints; i < len; i++) {
+            const points: { x: number; y: number }[] = [];
+            for (let i = 0; i < commonPolyRecordContents.NumPoints; i++) {
                 const x: number = recordContentsDataView.getFloat64(xIndex, true);
                 const y: number = recordContentsDataView.getFloat64(yIndex, true);
 
@@ -137,8 +138,8 @@ export class ShapeDataLoader {
                 yIndex += 16;
 
                 points.push({ x, y });
-                commonPolyRecordContents.PartsCoordinates.push(points);
             }
+            commonPolyRecordContents.PartsCoordinates.push(points);
 
             recordContentsOffset += 8 + recordContentsLength * 2;
         }
@@ -149,6 +150,8 @@ export class ShapeDataLoader {
 
         return this._setShapeFields(shapeHeader, shapeRecordContents);
     }
+
+
 
     private _setShapeFields(shapeHeader: ShapeHeader, shapeRecordContents: ShapeRecordContents): Shape {
         return new Shape(shapeHeader, shapeRecordContents);

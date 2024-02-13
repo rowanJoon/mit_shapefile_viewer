@@ -11,22 +11,23 @@ import {MouseWheelEventHandler} from './handler/MouseWheelEventHandler';
 import {ShapeRender} from "./render/ShapeRender";
 import {Layer} from "./render/Layer";
 import {DbaseLoader} from "./loader/DbaseDataLoader";
-import {Rectangle, QuadTree} from "./handler/QuadTree";
+import {Rectangle, QuadTree} from "./util/QuadTree";
 
 class App {
     private shapeRender: ShapeRender | undefined;
     private readonly geoCanvasInteract: GeoCanvasInteract;
     private eventDelegator: EventDelegator;
     private readonly layer: Layer;
-    private quadtree: QuadTree;
+    // private quadtree: QuadTree;
     constructor() {
         document.addEventListener('DOMContentLoaded', () => {
-            const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+            const fileInput: HTMLInputElement = document.getElementById('fileInput') as HTMLInputElement;
             fileInput.addEventListener('change', this.handleSelectFiles.bind(this));
         });
 
         this.geoCanvasInteract = {
             zoom: 1,
+            oldZoom: 1,
             panX: 0,
             panY: 0,
             isDragging: false,
@@ -38,12 +39,11 @@ class App {
             radius: 2,
             lineWidth: 1
         };
-
         this.eventDelegator = new EventDelegator(this.geoCanvasInteract.canvas);
         this.layer = new Layer();
-        const canvasRect = this.geoCanvasInteract.canvas.getBoundingClientRect();
-        const canvasBoundary = new Rectangle(0, 0, canvasRect.width, canvasRect.height);
-        this.quadtree = new QuadTree(canvasBoundary, 4);
+        // const canvasRect = this.geoCanvasInteract.canvas.getBoundingClientRect();
+        // const canvasBoundary = new Rectangle(0, 0, canvasRect.width, canvasRect.height);
+        // this.quadtree = new QuadTree(canvasBoundary, 4);
     }
 
     private async handleSelectFiles(event: Event): Promise<void> {
@@ -69,7 +69,7 @@ class App {
                         this.loadAndRenderShape(arrayBuffer);
                         break;
                     case 'dbf':
-                        this.loadAndExpressionDbf(arrayBuffer);
+                        this.loadDbf(arrayBuffer);
                         break;
                 }
             }
@@ -93,12 +93,10 @@ class App {
     }
 
     private loadAndRenderShape(arrayBuffer: ArrayBuffer): void {
-        let shape: Shape;
-        const quadtree = this.quadtree;
+        let shape: Shape = this.loadShape(arrayBuffer);
 
-        shape = this.loadShape(arrayBuffer);
-        this.renderShape(shape, quadtree);
-        this.setMouseEvent(shape, quadtree);
+        this.renderShape(shape);
+        this.setMouseEvent(shape);
     }
 
     private loadShape(arrayBuffer: ArrayBuffer): Shape {
@@ -106,36 +104,36 @@ class App {
         return shapeData.loadShapeData();
     }
 
-    private renderShape(shape: Shape, quadtree: QuadTree): void {
-        this.shapeRender = new ShapeRender('featureCanvas', shape, this.layer, quadtree);
+    private renderShape(shape: Shape): void {
+        this.shapeRender = new ShapeRender('featureCanvas', shape, this.layer);
         this.shapeRender.render(this.geoCanvasInteract);
     }
 
-    private setMouseEvent(shape: Shape, quadtree: QuadTree): void {
+    private setMouseEvent(shape: Shape): void {
         if (this.eventDelegator.eventListeners.size !== 0) {
             this.removeMouseEventHandler();
         }
-        this.addMouseEventHandler(shape, quadtree);
+        this.addMouseEventHandler(shape);
     }
 
-    private addMouseEventHandler(shape: Shape, quadtree: QuadTree): void {
+    private addMouseEventHandler(shape: Shape): void {
         if (this.shapeRender !== undefined) {
             const shapeRender: ShapeRender = this.shapeRender;
             const boundingBox: BoundingBox = shape.shapeHeader.boundingBox;
             const geoCanvasInteract: GeoCanvasInteract = this.geoCanvasInteract;
             const layer: Layer = this.layer;
 
-            const mouseClickEventHandler: MouseClickEventHandler = new MouseClickEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
-            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
-            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
-            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
-            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer, quadtree);
+            const mouseClickEventHandler: MouseClickEventHandler = new MouseClickEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer);
+            const mouseDownEventHandler: MouseMoveEventHandler = new MouseDownEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer);
+            const mouseMoveEventHandler: MouseMoveEventHandler = new MouseMoveEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer);
+            const mouseUpEventHandler: MouseMoveEventHandler = new MouseUpEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer);
+            const mouseWheelEventHandler: MouseMoveEventHandler = new MouseWheelEventHandler(shapeRender, boundingBox, geoCanvasInteract, layer);
 
             this.eventDelegator.addEventListener('click', mouseClickEventHandler);
-            // this.eventDelegator.addEventListener('mousedown', mouseDownEventHandler);
-            // this.eventDelegator.addEventListener('mousemove', mouseMoveEventHandler);
-            // this.eventDelegator.addEventListener('mouseup', mouseUpEventHandler);
-            // this.eventDelegator.addEventListener('wheel', mouseWheelEventHandler);
+            this.eventDelegator.addEventListener('mousedown', mouseDownEventHandler);
+            this.eventDelegator.addEventListener('mousemove', mouseMoveEventHandler);
+            this.eventDelegator.addEventListener('mouseup', mouseUpEventHandler);
+            this.eventDelegator.addEventListener('wheel', mouseWheelEventHandler);
         }
     }
 
@@ -143,16 +141,10 @@ class App {
         this.eventDelegator.removeAllEventListeners();
     }
 
-    private loadAndExpressionDbf(arrayBuffer: ArrayBuffer): void {
-        const layer = this.layer;
+    private loadDbf(arrayBuffer: ArrayBuffer): void {
         const dbaseLoader = new DbaseLoader(arrayBuffer);
         const recordsArray = dbaseLoader.readRecords();
         this.layer.addLayerData(recordsArray);
-        const geoDataArray = layer.getLayerData();
-        const jsonTextField: HTMLInputElement = document.getElementById('featureInfoArea') as HTMLInputElement;
-        const jsonData = { data: geoDataArray };
-
-        jsonTextField.value = JSON.stringify(jsonData, null, 2);
     }
 }
 

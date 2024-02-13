@@ -1,4 +1,5 @@
 import { GeoCanvasEventHandler } from './GeoCanvasEventHandler';
+import {QuadTree, Rectangle} from "../util/QuadTree";
 
 export class MouseWheelEventHandler extends GeoCanvasEventHandler {
     handleEvent(e: WheelEvent): void {

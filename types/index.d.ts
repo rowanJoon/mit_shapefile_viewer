@@ -12,6 +12,7 @@ export type BoundingBox = {
 
 export type GeoCanvasInteract = {
     zoom: number;
+    oldZoom: number;
     panX: number;
     panY: number;
     isDragging: boolean;
@@ -23,7 +24,3 @@ export type GeoCanvasInteract = {
     radius: number;
     lineWidth: number;
 };
-
-export interface RecordData {
-    [fieldName: string]: string | number;
-}

@@ -9,7 +9,7 @@ export interface ShapeHeader {
 }
 
 export interface ShapeRecordContents {
-    recordContents: Coordinate[] | CommonPolyRecordContents
+    recordContents: Coordinate[] | CommonPolyRecordContents,
 }
 
 export interface CommonPolyRecordContents {

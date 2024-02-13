@@ -1,4 +1,6 @@
-import {RecordData} from '../../types';
+export interface RecordData {
+    [fieldName: string]: string | number;
+}
 
 interface DbaseRecordHeader {
     version: number;
@@ -44,7 +46,7 @@ export class DbaseLoader {
             recordLength: recordLength
         };
 
-        console.log('record header : ', recordHeader);
+        // console.log('record header : ', recordHeader);
 
         return recordHeader;
     }
@@ -72,7 +74,7 @@ export class DbaseLoader {
             offset += 32;
         }
 
-        console.log('field descriptors array : ', fieldDescriptorsArray);
+        // console.log('field descriptors array : ', fieldDescriptorsArray);
 
         return fieldDescriptorsArray;
     }
@@ -111,7 +113,7 @@ export class DbaseLoader {
             recordOffset += fieldOffset;
         }
 
-        console.log('record array : ', recordArray);
+        // console.log('record array : ', recordArray);
 
         return recordArray;
     }

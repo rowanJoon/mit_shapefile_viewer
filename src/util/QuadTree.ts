@@ -13,7 +13,7 @@ export class Rectangle {
         this.height = height;
     }
 
-    contains(point: Coordinate): boolean {
+    public contains(point: Coordinate): boolean {
         return (
             point.x >= this.x - this.width &&
             point.x <= this.x + this.width &&
@@ -22,7 +22,7 @@ export class Rectangle {
         );
     }
 
-    intersects(range: Rectangle): boolean {
+    public intersects(range: Rectangle): boolean {
         return !(
             range.x - range.width > this.x + this.width ||
             range.x + range.width < this.x - this.width ||
@@ -32,15 +32,15 @@ export class Rectangle {
     }
 
     static createFromClickPoint(clickPoint: Coordinate, size: number): Rectangle {
-        // 마우스 클릭 지점을 중심으로 정해진 크기의 사각형 생성
-        const halfSize = size / 2;
+        const halfSize: number = size / 2;
         return new Rectangle(clickPoint.x - halfSize, clickPoint.y - halfSize, size, size);
     }
 }
+
 export class QuadTree {
     private boundary: Rectangle;
-    private capacity: number;
-    private points: Coordinate[];
+    private readonly capacity: number;
+    private readonly points: Coordinate[];
     private divided: boolean;
     private northeast: QuadTree | null;
     private northwest: QuadTree | null;
@@ -58,18 +58,17 @@ export class QuadTree {
         this.southwest = null;
     }
 
-    subdivide(): void {
-        const x = this.boundary.x;
-        const y = this.boundary.y;
-        const width = this.boundary.width;
-        const height = this.boundary.height;
+    private _subdivide(): void {
+        const x: number = this.boundary.x;
+        const y: number = this.boundary.y;
+        const width: number = this.boundary.width;
+        const height: number = this.boundary.height;
 
         const ne: Rectangle = new Rectangle(x + width / 2, y - height / 2, width / 2, height / 2);
         const nw: Rectangle = new Rectangle(x - width / 2, y - height / 2, width / 2, height / 2);
         const se: Rectangle = new Rectangle(x + width / 2, y + height / 2, width / 2, height / 2);
         const sw: Rectangle = new Rectangle(x - width / 2, y + height / 2, width / 2, height / 2);
 
-        // Quadtree 의 자식 노드 생성
         this.northeast = new QuadTree(ne, this.capacity);
         this.northwest = new QuadTree(nw, this.capacity);
         this.southeast = new QuadTree(sw, this.capacity);
@@ -78,7 +77,7 @@ export class QuadTree {
         this.divided = true;
     }
 
-    insert(point: Coordinate) {
+    public insert(point: Coordinate): boolean | undefined {
         if (!this.boundary.contains(point)) {
             return false;
         }
@@ -88,7 +87,7 @@ export class QuadTree {
             return true;
         } else {
             if (!this.divided) {
-                this.subdivide();
+                this._subdivide();
             }
 
             if (this.northeast?.insert(point)) {
@@ -103,7 +102,7 @@ export class QuadTree {
         }
     }
 
-    query(range: Rectangle, found: Coordinate[]): Coordinate[] {
+    public query(range: Rectangle, found: Coordinate[]): Coordinate[] {
         if (!this.boundary.intersects(range)) {
             return found;
         } else {
@@ -124,8 +123,8 @@ export class QuadTree {
         return found;
     }
 
-    show(geoCanvasInteract: GeoCanvasInteract) {
-        const ctx = geoCanvasInteract.canvas.getContext('2d');
+    public show(geoCanvasInteract: GeoCanvasInteract): void {
+        const ctx: CanvasRenderingContext2D | null = geoCanvasInteract.canvas.getContext('2d');
         if (ctx) {
             ctx.strokeStyle = 'black';
             ctx.rect(this.boundary.x, this.boundary.y, this.boundary.width * 2, this.boundary.height * 2);
@@ -140,12 +139,13 @@ export class QuadTree {
         }
     }
 
-    queryClosest(point: Coordinate): Coordinate | null {
+    public queryClosest(point: Coordinate): Coordinate | null {
         let closest: Coordinate | null = null;
-        let closestDist = Infinity;
+        let closestDist: number = Infinity;
 
         for (const p of this.points) {
-            const dist = Math.sqrt(Math.pow(point.x - p.x, 2) + Math.pow(point.y - p.y, 2));
+            const dist: number = Math.sqrt(Math.pow(point.x - p.x, 2) + Math.pow(point.y - p.y, 2));
+
             if (dist < closestDist) {
                 closest = p;
                 closestDist = dist;
@@ -153,13 +153,15 @@ export class QuadTree {
         }
 
         if (this.divided) {
-            const children = [this.northeast, this.northwest, this.southeast, this.southwest];
+            const children: (QuadTree | null)[] = [this.northeast, this.northwest, this.southeast, this.southwest];
 
             for (const child of children) {
                 if (child) {
-                    const childClosest = child.queryClosest(point);
+                    const childClosest: Coordinate | null = child.queryClosest(point);
+
                     if (childClosest) {
-                        const dist = Math.sqrt(Math.pow(point.x - childClosest.x, 2) + Math.pow(point.y - childClosest.y, 2));
+                        const dist: number = Math.sqrt(Math.pow(point.x - childClosest.x, 2) + Math.pow(point.y - childClosest.y, 2));
+
                         if (dist < closestDist) {
                             closest = childClosest;
                             closestDist = dist;

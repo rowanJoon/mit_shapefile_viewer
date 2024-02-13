@@ -1,6 +1,4 @@
-// import {Point} from "../feature/Point";
-// import {Poly} from "../feature/Poly";
-import {RecordData} from "../../types";
+import {RecordData} from "../loader/DbaseDataLoader";
 import {Shape} from "../feature/Shape";
 
 export class Layer {
