@@ -22,8 +22,4 @@ export class Layer {
     public getLayerData(): RecordData[] {
         return this.layerData;
     }
-
-    public getLayersLength(): number {
-        return this.layerShape.length;
-    }
 }

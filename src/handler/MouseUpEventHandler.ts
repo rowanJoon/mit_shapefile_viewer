@@ -5,5 +5,7 @@ export class MouseUpEventHandler extends GeoCanvasEventHandler {
         e.preventDefault();
 
         this.geoCanvasInteract.isDragging = false;
+        this.geoCanvasInteract.dragStartX = 0;
+        this.geoCanvasInteract.dragStartY = 0;
     }
 }

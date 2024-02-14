@@ -46,8 +46,6 @@ export class DbaseLoader {
             recordLength: recordLength
         };
 
-        // console.log('record header : ', recordHeader);
-
         return recordHeader;
     }
 
@@ -73,8 +71,6 @@ export class DbaseLoader {
             fieldDescriptorsArray.push(field);
             offset += 32;
         }
-
-        // console.log('field descriptors array : ', fieldDescriptorsArray);
 
         return fieldDescriptorsArray;
     }
@@ -112,8 +108,6 @@ export class DbaseLoader {
             recordArray.push(recordData);
             recordOffset += fieldOffset;
         }
-
-        // console.log('record array : ', recordArray);
 
         return recordArray;
     }

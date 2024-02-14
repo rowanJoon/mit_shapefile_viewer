@@ -68,7 +68,6 @@ export class ShapeDataLoader {
             const numPoints: number = recordContentsLength / 20;
             let coordinate: Coordinate = { x: 0, y: 0 };
 
-            // Set Coordinate
             for (let i = 0, len = numPoints; i < len; i++) {
                 const x: number = recordContentsDataView.getFloat64(i + 4, true);
                 const y: number = recordContentsDataView.getFloat64(i + 12, true);
@@ -83,7 +82,8 @@ export class ShapeDataLoader {
         }
 
         const shapeRecordContents: ShapeRecordContents = {
-            recordContents: coordinatesArr
+            recordContents: coordinatesArr,
+            canvasCoordinates: []
         };
 
         return this._setShapeFields(shapeHeader, shapeRecordContents);
@@ -113,22 +113,18 @@ export class ShapeDataLoader {
             let xIndex: number = 48;
             let yIndex: number = 56;
 
-            // Set Bbox
             commonPolyRecordContents.Box.xMin = recordContentsDataView.getFloat64(4, true);
             commonPolyRecordContents.Box.yMin = recordContentsDataView.getFloat64(12, true);
             commonPolyRecordContents.Box.xMax = recordContentsDataView.getFloat64(20, true);
             commonPolyRecordContents.Box.yMax = recordContentsDataView.getFloat64(28, true);
 
-            // Set NumParts, NumPoints
             commonPolyRecordContents.NumParts = recordContentsDataView.getInt32(36, true);
             commonPolyRecordContents.NumPoints = recordContentsDataView.getInt32(40, true);
 
-            // Set Parts
             for (let i = 0; i < commonPolyRecordContents.NumParts; i++) {
                 commonPolyRecordContents.Parts.push(recordContentsDataView.getInt32(44 + i * 4, true))
             }
 
-            // Set Points
             const points: { x: number; y: number }[] = [];
             for (let i = 0; i < commonPolyRecordContents.NumPoints; i++) {
                 const x: number = recordContentsDataView.getFloat64(xIndex, true);
@@ -145,13 +141,12 @@ export class ShapeDataLoader {
         }
 
         const shapeRecordContents: ShapeRecordContents = {
-            recordContents: commonPolyRecordContents
+            recordContents: commonPolyRecordContents,
+            canvasCoordinates: []
         };
 
         return this._setShapeFields(shapeHeader, shapeRecordContents);
     }
-
-
 
     private _setShapeFields(shapeHeader: ShapeHeader, shapeRecordContents: ShapeRecordContents): Shape {
         return new Shape(shapeHeader, shapeRecordContents);

@@ -10,6 +10,7 @@ export interface ShapeHeader {
 
 export interface ShapeRecordContents {
     recordContents: Coordinate[] | CommonPolyRecordContents,
+    canvasCoordinates: Coordinate[] | Array<Coordinate>[]
 }
 
 export interface CommonPolyRecordContents {

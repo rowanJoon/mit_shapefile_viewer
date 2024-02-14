@@ -12,7 +12,6 @@ export type BoundingBox = {
 
 export type GeoCanvasInteract = {
     zoom: number;
-    oldZoom: number;
     panX: number;
     panY: number;
     isDragging: boolean;
@@ -20,6 +19,10 @@ export type GeoCanvasInteract = {
     dragStartY: number;
     cursorX: number;
     cursorY: number;
+    mouseX: number;
+    mouseY: number;
+    canvasX: number;
+    canvasY: number;
     canvas: HTMLCanvasElement;
     radius: number;
     lineWidth: number;

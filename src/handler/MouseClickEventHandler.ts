@@ -11,54 +11,56 @@ export class MouseClickEventHandler extends GeoCanvasEventHandler {
     }
 
     public handleEvent(e: MouseEvent): void {
-        const mouseX: number = e.clientX - this.geoCanvasInteract.canvas.getBoundingClientRect().left;
-        const mouseY: number = e.clientY - this.geoCanvasInteract.canvas.getBoundingClientRect().top;
-        const canvasX: number = (mouseX - this.geoCanvasInteract.panX) / this.geoCanvasInteract.zoom;
-        const canvasY: number = (mouseY - this.geoCanvasInteract.panY) / this.geoCanvasInteract.zoom;
+        this.geoCanvasInteract.mouseX = e.clientX - this.geoCanvasInteract.canvas.getBoundingClientRect().left;
+        this.geoCanvasInteract.mouseY = e.clientY - this.geoCanvasInteract.canvas.getBoundingClientRect().top;
+        this.geoCanvasInteract.canvasX = (this.geoCanvasInteract.mouseX - this.geoCanvasInteract.panX) / this.geoCanvasInteract.zoom;
+        this.geoCanvasInteract.canvasY = (this.geoCanvasInteract.mouseY - this.geoCanvasInteract.panY) / this.geoCanvasInteract.zoom;
+
         const mouseClickCoordinate: Coordinate = {
-            x: canvasX,
-            y: canvasY,
+            x: this.geoCanvasInteract.canvasX,
+            y: this.geoCanvasInteract.canvasY,
         };
-        const canvasCoordToRealCoord: Coordinate = this.shapeRender.convertCanvasCoordToRealCoord(mouseClickCoordinate, this.boundingBox);
         const layer: Shape[] = this.layer.getLayer();
-        const layerData: RecordData[] = this.layer.getLayerData();
-        let dbaseData: { shapeType: number, dbaseData: string | number }[] = [{
+        const dbaseData: RecordData[] = this.layer.getLayerData();
+        let expressDbaseData: { shapeType: number, dbaseData: string | number }[] = [{
             shapeType: 0,
             dbaseData: ''
         }];
 
+        console.log('mouse click coord: ', mouseClickCoordinate);
+
         for (let i = 0; i < layer.length; i++) {
             const recordContents: Coordinate[] | CommonPolyRecordContents = layer[i].shapeContents.recordContents;
+            const canvasCoordinates: Coordinate[] | Array<Coordinate>[] = layer[i].shapeContents.canvasCoordinates;
 
             if (Array.isArray(recordContents)) {
-                const linearCoordinate: Coordinate | null = this._pointLinearSearch(recordContents, canvasCoordToRealCoord);
+                const linearCoordinate = this._pointLinearSearch(canvasCoordinates as Coordinate[], mouseClickCoordinate);
 
-                for (let j = 0; j < recordContents.length; j++) {
-                    if (this._areNumbersEqual(recordContents[j].x, (linearCoordinate as Coordinate).x) && this._areNumbersEqual(recordContents[j].y, (linearCoordinate as Coordinate).y)) {
-                        dbaseData.push({
+                for (let j = 0; j < canvasCoordinates.length; j++) {
+                    if (this._areNumbersEqual((canvasCoordinates[j] as Coordinate).x, (linearCoordinate as Coordinate).x) && this._areNumbersEqual((canvasCoordinates[j] as Coordinate).y, (linearCoordinate as Coordinate).y)) {
+                        expressDbaseData.push({
                             shapeType: layer[i].shapeHeader.shapeType,
-                            dbaseData: layerData[i][j] !== undefined ? layerData[i][j] : [][j]
+                            dbaseData: dbaseData[i][j] !== undefined ? dbaseData[i][j] : [][j]
                         });
                     }
                 }
             } else {
-                const partsCoordinates: Array<Coordinate>[] = recordContents.PartsCoordinates;
-                const linearCoordinates: Coordinate[] | null = this._polyLinearSearch(partsCoordinates, canvasCoordToRealCoord);
+                const linearCoordinates = this._polyLinearSearch(canvasCoordinates as Array<Array<Coordinate>>, mouseClickCoordinate);
 
-                for (let j = 0; j < partsCoordinates.length; j++) {
-                    const partsCoordinate: Coordinate[] = partsCoordinates[j];
+                for (let j = 0; j < canvasCoordinates.length; j++) {
+                    const canvasCoordinate = canvasCoordinates[j];
 
-                    if (this._areArraysEqual(partsCoordinate, linearCoordinates)) {
-                        dbaseData.push({
+                    if (this._areArraysEqual(canvasCoordinate as Coordinate[], linearCoordinates as Coordinate[])) {
+                        expressDbaseData.push({
                             shapeType: layer[i].shapeHeader.shapeType,
-                            dbaseData: layerData[i][j] !== undefined ? layerData[i][j] : [][j]
+                            dbaseData: dbaseData[i][j] !== undefined ? dbaseData[i][j] : [][j]
                         });
                     }
                 }
             }
         }
 
-        this._expressionDbaseData(dbaseData);
+        this._expressionDbaseData(expressDbaseData);
     }
 
     private _pointLinearSearch(coordinates: Coordinate[], targetCoordinate: Coordinate): Coordinate | null {
