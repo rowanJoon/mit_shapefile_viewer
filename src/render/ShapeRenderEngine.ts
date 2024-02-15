@@ -1,5 +1,3 @@
-import {BoundingBox, Coordinate} from "../../types";
-
 export class ShapeRenderEngine {
     public canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D | null;
@@ -103,22 +101,4 @@ export class ShapeRenderEngine {
             }
         }
     }
-
-    public convertRealCoordToCanvasCoord(coordinate: Coordinate, boundingBox: BoundingBox): Coordinate {
-        const x: number = ((coordinate.x - boundingBox.xMin) / (boundingBox.xMax - boundingBox.xMin)) * this.canvas.width;
-        const y: number = this.canvas.height - ((coordinate.y - boundingBox.yMin) / (boundingBox.yMax - boundingBox.yMin)) * this.canvas.height;
-
-        return { x, y }
-    }
-
-    public convertCanvasCoordToRealCoord(canvasCoord: Coordinate, boundingBox: BoundingBox): Coordinate {
-        const x: number = (canvasCoord.x / this.canvas.width) * (boundingBox.xMax - boundingBox.xMin) + boundingBox.xMin;
-        const y: number = ((this.canvas.height - canvasCoord.y) / this.canvas.height) * (boundingBox.yMax - boundingBox.yMin) + boundingBox.yMin;
-
-        return {
-            x: Number(x.toFixed(5)),
-            y: Number(y.toFixed(5))
-        };
-    }
-
 }
