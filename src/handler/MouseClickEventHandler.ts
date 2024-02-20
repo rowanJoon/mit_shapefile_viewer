@@ -26,9 +26,6 @@ export class MouseClickEventHandler extends GeoCanvasEventHandler {
         const geoCanvasInteract: GeoCanvasInteract = this.geoCanvasInteract;
         geoCanvasInteract.mouseX = e.clientX - geoCanvasInteract.canvas.getBoundingClientRect().left;
         geoCanvasInteract.mouseY = e.clientY - geoCanvasInteract.canvas.getBoundingClientRect().top;
-        // geoCanvasInteract.canvasX = (geoCanvasInteract.mouseX - geoCanvasInteract.panX) / geoCanvasInteract.zoom;
-        // geoCanvasInteract.canvasY = (geoCanvasInteract.mouseY - geoCanvasInteract.panY) / geoCanvasInteract.zoom;
-
         geoCanvasInteract.canvasX = geoCanvasInteract.mouseX / geoCanvasInteract.zoom - geoCanvasInteract.panX;
         geoCanvasInteract.canvasY = geoCanvasInteract.mouseY / geoCanvasInteract.zoom - geoCanvasInteract.panY;
 
@@ -42,8 +39,6 @@ export class MouseClickEventHandler extends GeoCanvasEventHandler {
         }];
         const calculate: Calculator = this.calculate;
         const linearSearch: LinearSearch = this.linearSearch;
-
-        console.log('click 좌표: ', mouseClickCoordinate);
 
         for (let i = 0; i < layer.length; i++) {
             const recordContents: Coordinate[] | CommonPolyRecordContents = layer[i].shapeContents.recordContents;
@@ -63,7 +58,7 @@ export class MouseClickEventHandler extends GeoCanvasEventHandler {
                 }
             } else {
                 const linearCoordinates: Coordinate[] | null = linearSearch.multiLinearSearch(canvasCoordinates as Array<Array<Coordinate>>, mouseClickCoordinate);
-                console.log('linear search 좌표: ', linearCoordinates);
+
                 for (let j = 0; j < canvasCoordinates.length; j++) {
                     const canvasCoordinate: Coordinate | Coordinate[] = canvasCoordinates[j];
 

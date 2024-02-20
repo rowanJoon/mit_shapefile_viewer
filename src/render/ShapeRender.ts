@@ -30,30 +30,16 @@ export class ShapeRender extends ShapeRenderEngine {
 
         const boundingBox: BoundingBox = this.calculator.calculateLargestBoundingBox(layer);
 
-        this._renderingCanvas(geoCanvasInteract, layer, boundingBox);
+        this._extractCanvasCoordinates(geoCanvasInteract, layer, boundingBox);
+        this._renderingCanvas(geoCanvasInteract, layer);
         this.setMouseEvent(geoCanvasInteract, boundingBox);
     }
 
-    private _renderingCanvas(geoCanvasInteract: GeoCanvasInteract, layer: Layer, boundingBox: BoundingBox): void {
-        let hasCleared: boolean = false;
-
-        this.clearRect();
-        this.save();
-        this.scale(geoCanvasInteract.zoom, geoCanvasInteract.zoom);
-        this.translate(geoCanvasInteract.panX, geoCanvasInteract.panY);
-
+    private _extractCanvasCoordinates(geoCanvasInteract: GeoCanvasInteract, layer: Layer, boundingBox: BoundingBox) {
         for (let i = 0; i < layer.getLayer().length; i++) {
-            if (!hasCleared) {
-                this.clearRect();
-                hasCleared = true;
-            }
-
-            const shapeType: number = layer.getLayer()[i].shapeHeader.shapeType;
             const recordContents: Coordinate[] | CommonPolyRecordContents = layer.layerShape[i].shapeContents.recordContents;
 
             if (Array.isArray(recordContents)) {
-                this._setStyleFromShapeType(shapeType);
-
                 const canvasCoordinateArr: Coordinate[] = [];
 
                 for (let j = 0; j < recordContents.length; j++) {
@@ -65,20 +51,15 @@ export class ShapeRender extends ShapeRenderEngine {
                     canvasCoordinate.x = x;
                     canvasCoordinate.y = y;
                     canvasCoordinateArr.push({x, y});
-
-                    this.drawPoint(canvasCoordinate.x, canvasCoordinate.y, geoCanvasInteract.radius);
                 }
                 layer.layerShape[i].shapeContents.canvasCoordinates = canvasCoordinateArr;
             } else {
                 const partsCoordinates: Array<Coordinate>[] = recordContents.PartsCoordinates;
-                this.setLineWidth(geoCanvasInteract.lineWidth);
 
                 partsCoordinates.forEach((coordinatesPair: Coordinate[], pairIdx: number) => {
-                    this.beginPath();
-
                     let canvasCoordinateArr: Coordinate[] = [];
 
-                    Object.values(coordinatesPair).forEach((realCoordinate: Coordinate, idx: number) => {
+                    Object.values(coordinatesPair).forEach(realCoordinate => {
                         const canvasCoordinate: Coordinate = this.calculator.calculateRealCoordToCanvasCoord(this.canvas, realCoordinate, boundingBox);
                         const x: number = canvasCoordinate.x * geoCanvasInteract.zoom + geoCanvasInteract.panX;
                         const y: number = canvasCoordinate.y * geoCanvasInteract.zoom + geoCanvasInteract.panY;
@@ -86,38 +67,97 @@ export class ShapeRender extends ShapeRenderEngine {
                         canvasCoordinate.x = x;
                         canvasCoordinate.y = y;
                         canvasCoordinateArr.push(canvasCoordinate);
-
-                        this.drawPoly(canvasCoordinate.x, canvasCoordinate.y, idx);
                     });
 
                     layer.layerShape[i].shapeContents.canvasCoordinates[pairIdx] = canvasCoordinateArr;
-
-                    this.closePath();
-                    this._setStyleFromShapeType(shapeType);
-
-                    if (shapeType === 5) {
-                        this.fill();
-                    }
-
-                    this.stroke();
                 });
             }
         }
-
-        this.restore();
     }
 
-    private _setStyleFromShapeType(shapeType: number): void {
-        switch (shapeType) {
-            case 1:
-                this.fillColor('#339933');
-                break;
-            case 3:
-                this.strokeColor('#6666CC');
-                break;
-            case 5:
-                this.strokeColor('#996633');
-                this.fillColor('#FFCC00');
+    private _renderingCanvas(geoCanvasInteract: GeoCanvasInteract, layer: Layer): void {
+        let hasCleared: boolean = false;
+
+        this.setClearRect();
+        this.setSave();
+        this.setScale(geoCanvasInteract.zoom, geoCanvasInteract.zoom);
+        this.setTranslate(geoCanvasInteract.panX, geoCanvasInteract.panY);
+
+        for (let i = 0; i < layer.getLayer().length; i++) {
+            if (!hasCleared) {
+                this.setClearRect();
+                hasCleared = true;
+            }
+
+            const canvasCoordinates: Coordinate[] | Coordinate[][] = layer.getLayer()[i].shapeContents.canvasCoordinates;
+            const shapeType: number = layer.getLayer()[i].shapeHeader.shapeType;
+
+            switch (shapeType) {
+                case 1:
+                    const coordinatesForPoint: Coordinate[] = canvasCoordinates as Coordinate[];
+                    for (let i = 0; i < coordinatesForPoint.length; i++) {
+                        this.renderingPoint(coordinatesForPoint[i].x, coordinatesForPoint[i].y, geoCanvasInteract.radius, '#339933');
+                    }
+                    break;
+                case 3:
+                    const coordinatesForPolyline: Coordinate[][] = canvasCoordinates as Coordinate[][];
+                    for (let i = 0; i < coordinatesForPolyline.length; i++) {
+                        coordinatesForPolyline[i].forEach((coordinate, idx) => {
+                            this.renderingPolyline(coordinate.x, coordinate.y, idx, geoCanvasInteract.lineWidth, '#6666CC');
+                        });
+                    }
+                    break;
+                case 5:
+                    const coordinatesForPolygon: Coordinate[][] = canvasCoordinates as Coordinate[][];
+                    for (let i = 0; i < coordinatesForPolygon.length; i++) {
+                        coordinatesForPolygon[i].forEach((coordinate, idx) => {
+                            this.renderingPolygon(coordinate.x, coordinate.y, idx, coordinatesForPolygon[i].length, '#996633', '#FFCC00');
+                        });
+                    }
+                    break;
+            }
+        }
+
+        this.setRestore();
+    }
+
+    public renderingPoint(x: number, y: number, radius: number, fillColor: string): void {
+        this.setFillColor(fillColor);
+        this.setBeginPath();
+        this.setArc(x, y, radius, 0, 2 * Math.PI);
+        this.setFill();
+        this.setClosePath();
+    }
+
+    public renderingPolyline(x: number, y: number, coordinatesArrIdx: number, lineWidth: number, strokeColor: string): void {
+        this.setStrokeColor(strokeColor);
+        this.setLineWidth(lineWidth);
+
+        if (coordinatesArrIdx === 0) {
+            this.setBeginPath();
+            this.setMoveTo(x, y);
+        } else {
+            this.setLineTo(x, y);
+            this.setClosePath();
+            this.setStroke();
+        }
+    }
+
+    public renderingPolygon(x: number, y: number, coordinatesArrIdx: number, coordinatesArrLength: number, strokeColor: string, fillColor: string): void {
+        this.setStrokeColor(strokeColor);
+        this.setFillColor(fillColor);
+
+        if (coordinatesArrIdx === 0) {
+            this.setBeginPath();
+            this.setMoveTo(x, y);
+        } else {
+            this.setLineTo(x, y);
+        }
+
+        if (coordinatesArrIdx === coordinatesArrLength - 1) {
+            this.setClosePath();
+            this.setStroke();
+            this.setFill();
         }
     }
 

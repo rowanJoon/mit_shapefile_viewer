@@ -1,104 +1,73 @@
 export class ShapeRenderEngine {
     public canvas: HTMLCanvasElement;
-    private readonly ctx: CanvasRenderingContext2D | null;
+    public ctx: CanvasRenderingContext2D;
 
     constructor(canvasId: string) {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-        this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
         if (!this.ctx) {
             console.error('Unable to get 2D context!');
         }
     }
 
-    public beginPath(): void {
-        if (this.ctx) {
-            this.ctx.beginPath();
-        }
+    public setBeginPath(): void {
+        this.ctx.beginPath();
     }
 
-    public closePath(): void {
-        if (this.ctx) {
-            this.ctx.closePath();
-        }
+    public setClosePath(): void {
+        this.ctx.closePath();
     }
 
-    public stroke(): void {
-        if (this.ctx) {
-            this.ctx.stroke();
-        }
+    public setArc(x: number, y: number, radius: number, startAngle: number, endAngle: number): void {
+        this.ctx.arc(x, y, radius, startAngle, endAngle);
     }
 
-    public fill(): void {
-        if (this.ctx) {
-            this.ctx.fill();
-        }
+    public setMoveTo(x: number, y: number): void {
+        this.ctx.moveTo(x, y);
     }
 
-    public fillColor(color: string): void {
-        if (this.ctx) {
-            this.ctx.fillStyle = color;
-        }
+    public setLineTo(x: number, y: number): void {
+        this.ctx.lineTo(x, y);
     }
 
-    public strokeColor(color: string): void {
-        if (this.ctx) {
-            this.ctx.strokeStyle = color;
-        }
+    public setStroke(): void {
+        this.ctx.stroke();
+    }
+
+    public setFill(): void {
+        this.ctx.fill();
+    }
+
+    public setFillColor(color: string): void {
+        this.ctx.fillStyle = color;
+    }
+
+    public setStrokeColor(color: string): void {
+        this.ctx.strokeStyle = color;
     }
 
     public setLineWidth(lineWidth: number): void {
-        if (this.ctx) {
-            this.ctx.lineWidth = lineWidth;
-        }
+        this.ctx.lineWidth = lineWidth;
     }
 
-    public clearRect(): void {
-        if (this.ctx) {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        }
+    public setClearRect(): void {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    public translate(panX: number, panY: number): void {
-        if (this.ctx) {
-            this.ctx.translate(panX, panY);
-        }
+    public setTranslate(panX: number, panY: number): void {
+        this.ctx.translate(panX, panY);
     }
 
-    public scale(minZoom: number, maxZoom: number): void {
-        if (this.ctx) {
-            this.ctx.scale(minZoom, maxZoom);
-        }
+    public setScale(minZoom: number, maxZoom: number): void {
+        this.ctx.scale(minZoom, maxZoom);
     }
 
-    public save(): void {
-        if (this.ctx) {
-            this.ctx.save();
-        }
+    public setSave(): void {
+        this.ctx.save();
     }
 
-    public restore(): void {
-        if (this.ctx) {
-            this.ctx.restore();
-        }
-    }
-
-    public drawPoint(x: number, y: number, radius: number): void {
-        if (this.ctx) {
-            this.beginPath();
-            this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            this.fill();
-            this.closePath();
-        }
-    }
-
-    public drawPoly(x: number, y: number, idx: number): void {
-        if (this.ctx) {
-            if (idx === 0) {
-                this.ctx.moveTo(x, y);
-            } else {
-                this.ctx.lineTo(x, y);
-            }
-        }
+    public setRestore(): void {
+        this.ctx.restore();
     }
 }

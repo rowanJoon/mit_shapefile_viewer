@@ -80,7 +80,7 @@ class App {
         checkbox.checked = true;
 
         label.htmlFor = fileName;
-        label.appendChild(document.createTextNode(fileName))
+        label.appendChild(document.createTextNode(fileName));
 
         shapeFileNameField.appendChild(checkbox);
         shapeFileNameField.appendChild(label);
