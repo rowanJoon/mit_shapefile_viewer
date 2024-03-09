@@ -1,5 +1,5 @@
 import {RecordData} from "../loader/DbaseDataLoader";
-import {Shape} from "../feature/Shape";
+import {Shape} from "./Shape";
 
 export class Layer {
     public layerShape: (Shape)[] = [];
@@ -11,7 +11,7 @@ export class Layer {
         }
     }
 
-    public addLayerData(recordDbaseData: RecordData[]) {
+    public addLayerData(recordDbaseData: RecordData[]): void {
         this.layerData.push(recordDbaseData);
     }
 

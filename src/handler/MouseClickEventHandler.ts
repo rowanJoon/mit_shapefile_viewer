@@ -1,7 +1,7 @@
 import {GeoCanvasEventHandler} from './GeoCanvasEventHandler';
 import {BoundingBox, Coordinate, GeoCanvasInteract} from '../../types';
 import {ShapeRender} from "../render/ShapeRender";
-import {Layer} from "../render/Layer";
+import {Layer} from "../feature/Layer";
 import {CommonPolyRecordContents, Shape} from "../feature/Shape";
 import {RecordData} from "../loader/DbaseDataLoader";
 import {LinearSearch} from "../util/LinearSearch";

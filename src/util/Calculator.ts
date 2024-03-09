@@ -1,4 +1,4 @@
-import {Layer} from "../render/Layer";
+import {Layer} from "../feature/Layer";
 import {BoundingBox, Coordinate} from "../../types";
 
 export class Calculator {
@@ -45,7 +45,7 @@ export class Calculator {
     // }
 
     public areNumberIsEqual(num1: number, num2: number): boolean {
-        const epsilon = 1e-15;
+        const epsilon: 1e-15 = 1e-15;
         return Math.abs(num1 - num2) < epsilon;
     }
 

@@ -1,7 +1,7 @@
 import {BoundingBox, GeoCanvasInteract} from '../../types';
 import {EventListener} from '../util/EventDelegator';
 import {ShapeRender} from "../render/ShapeRender";
-import {Layer} from "../render/Layer";
+import {Layer} from "../feature/Layer";
 
 export abstract class GeoCanvasEventHandler implements EventListener {
     shapeRender: ShapeRender;

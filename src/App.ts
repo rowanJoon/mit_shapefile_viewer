@@ -4,7 +4,7 @@ import {ShapeDataLoader} from './loader/ShapeDataLoader';
 import {FileChecker} from './util/FileChecker';
 import {EventDelegator} from './util/EventDelegator';
 import {ShapeRender} from "./render/ShapeRender";
-import {Layer} from "./render/Layer";
+import {Layer} from "./feature/Layer";
 import {DbaseLoader} from "./loader/DbaseDataLoader";
 
 class App {

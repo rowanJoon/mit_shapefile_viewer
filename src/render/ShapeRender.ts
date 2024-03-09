@@ -1,5 +1,5 @@
 import {BoundingBox, Coordinate, GeoCanvasInteract} from "../../types";
-import {Layer} from "./Layer";
+import {Layer} from "../feature/Layer";
 import {CommonPolyRecordContents, Shape} from "../feature/Shape";
 import {ShapeRenderEngine} from "./ShapeRenderEngine";
 import {EventDelegator} from "../util/EventDelegator";
@@ -18,6 +18,7 @@ export class ShapeRender extends ShapeRenderEngine {
 
     constructor(canvasId: string, shape: Shape, layer: Layer, eventDelegator: EventDelegator) {
         super(canvasId);
+
         this.shape = shape;
         this.layer = layer;
         this.eventDelegator = eventDelegator;
@@ -35,7 +36,7 @@ export class ShapeRender extends ShapeRenderEngine {
         this.setMouseEvent(geoCanvasInteract, boundingBox);
     }
 
-    private _extractCanvasCoordinates(geoCanvasInteract: GeoCanvasInteract, layer: Layer, boundingBox: BoundingBox) {
+    private _extractCanvasCoordinates(geoCanvasInteract: GeoCanvasInteract, layer: Layer, boundingBox: BoundingBox): void {
         for (let i = 0; i < layer.getLayer().length; i++) {
             const recordContents: Coordinate[] | CommonPolyRecordContents = layer.layerShape[i].shapeContents.recordContents;
 

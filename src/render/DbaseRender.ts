@@ -7,13 +7,18 @@ export class DbaseRender {
             jsonData.data['message'] = 'dbf 파일을 선택하세요.';
         } else {
             for (let i = 0; i < dbaseData.length; i++) {
-                let dbaseDataName = '';
-                if (dbaseData[i].shapeType === 1) {
-                    dbaseDataName = 'point';
-                } else if (dbaseData[i].shapeType === 3) {
-                    dbaseDataName = 'polyline';
-                } else if (dbaseData[i].shapeType === 5) {
-                    dbaseDataName = 'polygon';
+                let dbaseDataName: string = '';
+
+                switch (dbaseData[i].shapeType) {
+                    case 1:
+                        dbaseDataName = 'point';
+                        break;
+                    case 3:
+                        dbaseDataName = 'polyline';
+                        break;
+                    case 5:
+                        dbaseDataName = 'polygon';
+                        break;
                 }
 
                 if (dbaseDataName !== '') {
